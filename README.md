@@ -110,17 +110,47 @@ GEMINI_API_KEY=your_api_key_here
 
 ---
 
-## 6. Run Backend Server
+## 6. Install FFmpeg (Required for Whisper Voice AI)
+
+Download FFmpeg from:
+
+```text
+https://drive.google.com/drive/folders/1zUizz_q5qMTMP9I5Ed_bInjIchTHXRCL?usp=sharing
+```
+
+After downloading:
+
+* Extract the ZIP file
+* Open the extracted folder
+* Locate the `bin` folder
+
+Example:
+
+```text
+C:\Users\YourName\Downloads\ffmpeg\bin
+```
+
+Add FFmpeg to PATH in PowerShell:
+
+```powershell
+$env:Path += ";C:\Path\To\ffmpeg\bin"
+```
+
+Replace the path above with your actual FFmpeg `bin` folder path.
+
+---
+
+## 7. Run Backend Server
 
 ```bash
-uv run uvicorn app.main:app --reload
+uvicorn app.main:app --reload --reload-dir app
 ```
 
 ---
 
 ## Backend URL
 
-```bash
+```text
 http://127.0.0.1:8000
 ```
 
@@ -128,7 +158,7 @@ http://127.0.0.1:8000
 
 ## Swagger Documentation
 
-```bash
+```text
 http://127.0.0.1:8000/docs
 ```
 
@@ -162,7 +192,7 @@ npm run dev
 
 ## Frontend URL
 
-```bash
+```text
 http://localhost:5173
 ```
 
