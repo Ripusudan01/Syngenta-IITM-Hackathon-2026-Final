@@ -1,0 +1,60 @@
+<<<<<<< HEAD
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+=======
+# Python-generated files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build files
+build/
+dist/
+wheels/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large datasets
+datasets/*.csv
+
+# Exceptions (keep documentation)
+!datasets/DATA_DICTIONARY.md
+>>>>>>> c1370a71ed511ee9fe8e8eb69e8c7e88a05a6a7a
