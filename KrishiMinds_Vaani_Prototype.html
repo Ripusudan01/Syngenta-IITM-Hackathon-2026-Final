@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAANI V3 — Technical Build Roadmap</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&display=swap');
+
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#1c2128; --bg4:#22272e;
+  --border:#30363d; --border2:#444c56;
+  --text:#cdd9e5; --muted:#768390; --dim:#444c56;
+  --green:#57ab5a; --greenl:#1b2f1e; --greend:#2ea043;
+  --blue:#4184e4; --bluel:#0d1f3c; --blued:#316dca;
+  --gold:#d4a72c; --goldl:#271d08; --goldd:#a67d19;
+  --red:#e5534b; --redl:#2c1518; --redd:#c93c37;
+  --purple:#986ee2; --purplel:#1e1433;
+  --teal:#46954a; --teall:#0d2014;
+  --orange:#cc6b2c; --orangel:#271408;
+  --cyan:#39c5cf; --cyanl:#0d2426;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:200;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:56px;}
+.h-logo{font-family:'Fira Code',monospace;font-size:13px;font-weight:600;color:var(--green);letter-spacing:0.04em;}
+.h-sub{font-family:'Fira Code',monospace;font-size:10px;color:var(--muted);margin-left:12px;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.tag{font-family:'Fira Code',monospace;font-size:9px;padding:3px 9px;letter-spacing:0.06em;border-radius:2px;font-weight:600;}
+.tag-g{background:var(--greenl);color:var(--green);border:1px solid #2a4a2e;}
+.tag-b{background:var(--bluel);color:var(--blue);border:1px solid #1a3060;}
+.tag-gold{background:var(--goldl);color:var(--gold);border:1px solid #4a3810;}
+.tag-r{background:var(--redl);color:var(--red);border:1px solid #4a1818;}
+.tag-p{background:var(--purplel);color:var(--purple);border:1px solid #2e1a60;}
+.tag-c{background:var(--cyanl);color:var(--cyan);border:1px solid #0d3a40;}
+.tag-o{background:var(--orangel);color:var(--orange);border:1px solid #4a2a10;}
+
+/* NAV */
+.nav{background:var(--bg2);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;position:sticky;top:56px;z-index:190;}
+.nav::-webkit-scrollbar{display:none;}
+.nt{padding:0 16px;height:40px;display:flex;align-items:center;gap:7px;font-family:'Fira Code',monospace;font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.15s;border-right:1px solid var(--border);user-select:none;}
+.nt:hover{color:var(--text);background:var(--bg3);}
+.nt.active{color:var(--green);border-bottom-color:var(--green);background:var(--bg);}
+.nt-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+
+/* LAYOUT */
+.page{display:flex;min-height:calc(100vh - 96px);}
+
+/* SECTIONS */
+.sec{display:none;width:100%;padding:28px 32px 80px;animation:up 0.2s ease;}
+.sec.active{display:block;}
+@keyframes up{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* SECTION HEADER */
+.sh{margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.sh-eye{font-family:'Fira Code',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;font-weight:600;margin-bottom:6px;}
+.sh-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1.1;margin-bottom:6px;}
+.sh-desc{font-size:12px;color:var(--muted);line-height:1.75;max-width:580px;}
+
+/* CODE BLOCKS */
+.code-block{background:var(--bg);border:1px solid var(--border);font-family:'Fira Code',monospace;font-size:11px;line-height:1.9;overflow-x:auto;margin-bottom:14px;}
+.cb-head{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg2);}
+.cb-filename{font-size:10px;color:var(--green);font-weight:600;letter-spacing:0.06em;}
+.cb-lang{font-size:9px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+.cb-body{padding:14px 16px;}
+.cb-body pre{white-space:pre-wrap;word-break:break-word;}
+/* Syntax colors */
+.kw{color:#f47067;} /* keywords */
+.fn{color:#dcbdfb;} /* functions */
+.st{color:#96d0ff;} /* strings */
+.cm{color:#636e7b;} /* comments */
+.nm{color:#6bc46d;} /* numbers/names */
+.op{color:#f69d50;} /* operators */
+.ty{color:#aff5b4;} /* types */
+.im{color:#ff9492;} /* imports */
+
+/* CARDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+
+.card{background:var(--bg2);border:1px solid var(--border);padding:16px;position:relative;overflow:hidden;transition:border-color 0.15s;}
+.card:hover{border-color:var(--border2);}
+.c-top{position:absolute;top:0;left:0;width:100%;height:2px;}
+.c-eye{font-family:'Fira Code',monospace;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;font-weight:600;margin-bottom:7px;}
+.c-title{font-size:13px;font-weight:700;margin-bottom:7px;line-height:1.3;}
+.c-body{font-size:11px;color:#768390;line-height:1.8;}
+.cg .c-top{background:var(--green);} .cg .c-eye{color:var(--green);}
+.cb2 .c-top{background:var(--blue);} .cb2 .c-eye{color:var(--blue);}
+.cgo .c-top{background:var(--gold);} .cgo .c-eye{color:var(--gold);}
+.cr .c-top{background:var(--red);} .cr .c-eye{color:var(--red);}
+.cp .c-top{background:var(--purple);} .cp .c-eye{color:var(--purple);}
+.ct2 .c-top{background:var(--teal);} .ct2 .c-eye{color:var(--teal);}
+.co .c-top{background:var(--orange);} .co .c-eye{color:var(--orange);}
+.cc .c-top{background:var(--cyan);} .cc .c-eye{color:var(--cyan);}
+
+/* STEP BLOCKS */
+.step{background:var(--bg2);border:1px solid var(--border);margin-bottom:10px;overflow:hidden;}
+.step-head{padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background 0.15s;}
+.step-head:hover{background:var(--bg3);}
+.step-num{font-family:'Fira Code',monospace;font-size:11px;font-weight:700;min-width:32px;flex-shrink:0;}
+.step-info{flex:1;}
+.step-title{font-size:13px;font-weight:700;margin-bottom:3px;}
+.step-meta{font-family:'Fira Code',monospace;font-size:9px;color:var(--muted);letter-spacing:0.06em;}
+.step-body{display:none;border-top:1px solid var(--border);padding:16px 18px;background:var(--bg3);animation:up 0.2s ease;}
+.step-body.open{display:block;}
+.step-right{text-align:right;flex-shrink:0;}
+
+/* FILE TREE */
+.tree{background:var(--bg);border:1px solid var(--border);padding:14px 16px;font-family:'Fira Code',monospace;font-size:11px;line-height:2;margin-bottom:14px;}
+.tr{padding-left:var(--indent,0);}
+.tr-dir{color:var(--blue);}
+.tr-file{color:var(--text);}
+.tr-comment{color:var(--muted);}
+
+/* FLOW DIAGRAM */
+.flow{display:flex;align-items:stretch;border:1px solid var(--border);overflow:hidden;margin-bottom:14px;min-width:700px;}
+.flow-wrap{overflow-x:auto;margin-bottom:14px;}
+.fn2{flex:1;background:var(--bg2);padding:14px 12px;border-right:1px solid var(--border);position:relative;}
+.fn2:last-child{border-right:none;}
+.fn2:hover{background:var(--bg3);}
+.fn2-step{font-family:'Fira Code',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.fn2-title{font-size:12px;font-weight:700;margin-bottom:6px;}
+.fn2-body{font-size:10px;color:#768390;line-height:1.7;}
+.fn2-bar{position:absolute;bottom:0;left:0;width:100%;height:2px;}
+.fa2{width:20px;flex-shrink:0;background:var(--bg3);display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:11px;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:14px;}
+.tbl th{font-family:'Fira Code',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;padding:9px 12px;text-align:left;background:var(--bg3);color:var(--muted);border:1px solid var(--border);font-weight:700;}
+.tbl td{padding:9px 12px;border:1px solid var(--border);background:var(--bg2);vertical-align:top;line-height:1.6;color:#adbac7;}
+.tbl tr:hover td{background:var(--bg3);}
+
+/* TIMELINE */
+.tl{position:relative;padding-left:26px;}
+.tl::before{content:'';position:absolute;left:6px;top:10px;bottom:10px;width:1px;background:linear-gradient(180deg,var(--green) 0%,var(--border) 100%);}
+.tl-item{position:relative;background:var(--bg2);border:1px solid var(--border);padding:14px 18px;margin-bottom:10px;transition:border-color 0.15s;}
+.tl-item:hover{border-color:var(--green);}
+.tl-item::before{content:'';position:absolute;left:-21px;top:16px;width:9px;height:9px;border-radius:50%;background:var(--bg2);border:2px solid var(--green);box-shadow:0 0 5px #2ea04360;}
+.tl-item.hot::before{background:var(--red);border-color:var(--red);box-shadow:0 0 5px #c93c3760;}
+.tl-item.done::before{background:var(--green);border-color:var(--green);}
+.tl-date{font-family:'Fira Code',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px;font-weight:700;}
+.tl-title{font-size:13px;font-weight:700;margin-bottom:6px;}
+.tl-body{font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:8px;}
+
+/* CHECKLIST */
+.cl{display:flex;flex-direction:column;gap:6px;}
+.ci{display:flex;gap:10px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);padding:11px 14px;cursor:pointer;transition:border-color 0.15s;}
+.ci:hover{border-color:var(--green);}
+.ci.done{opacity:0.45;}
+.ci.done .ci-text{text-decoration:line-through;color:var(--muted);}
+.ci-box{width:16px;height:16px;border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;transition:all 0.15s;margin-top:1px;}
+.ci.done .ci-box{background:var(--green);border-color:var(--green);color:#000;}
+.ci-p{font-family:'Fira Code',monospace;font-size:8px;padding:2px 6px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;flex-shrink:0;margin-top:1px;}
+.ci-content{flex:1;}
+.ci-text{font-size:12px;font-weight:600;margin-bottom:2px;line-height:1.4;}
+.ci-hint{font-size:10px;color:var(--muted);line-height:1.6;}
+
+/* PROGRESS */
+.prog{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);padding:10px 14px;margin-bottom:14px;}
+.prog-lbl{font-family:'Fira Code',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);min-width:130px;}
+.prog-bar{flex:1;height:3px;background:var(--border);}
+.prog-fill{height:100%;background:var(--green);transition:width 0.4s ease;}
+.prog-pct{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;color:var(--green);min-width:36px;text-align:right;}
+
+/* MISC */
+hr.d{border:none;border-top:1px solid var(--border);margin:18px 0;}
+.sec-lbl{font-family:'Fira Code',monospace;font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:12px;font-weight:700;}
+strong{color:var(--text);font-weight:600;}
+em{color:var(--gold);font-style:normal;font-family:'Fira Code',monospace;font-size:0.9em;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border2);}
+.hl{background:var(--bg3);border:1px solid var(--border);padding:14px 18px;margin-bottom:14px;}
+.hl.g{border-left:3px solid var(--green);}
+.hl.b{border-left:3px solid var(--blue);}
+.hl.gold{border-left:3px solid var(--gold);}
+.hl.r{border-left:3px solid var(--red);}
+.hl-lbl{font-family:'Fira Code',monospace;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;margin-bottom:6px;}
+.hl.g .hl-lbl{color:var(--green);}
+.hl.b .hl-lbl{color:var(--blue);}
+.hl.gold .hl-lbl{color:var(--gold);}
+.hl.r .hl-lbl{color:var(--red);}
+.hl-title{font-size:14px;font-weight:700;margin-bottom:8px;}
+.hl-body{font-size:12px;color:var(--muted);line-height:1.8;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="display:flex;align-items:center;">
+    <div class="h-logo">VAANI V3</div>
+    <div class="h-sub">// Technical Build Roadmap — From Zero to Production</div>
+  </div>
+  <div class="h-right">
+    <span class="tag tag-g">Python + FastAPI</span>
+    <span class="tag tag-b">PostgreSQL + Redis</span>
+    <span class="tag tag-gold">React PWA</span>
+    <span class="tag tag-p">LangChain + Claude API</span>
+    <span class="tag tag-c">Twilio + Exotel</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="nt active" onclick="show('overview')"><div class="nt-dot" style="background:var(--green)"></div>00 · Overview</div>
+  <div class="nt" onclick="show('repo')"><div class="nt-dot" style="background:var(--blue)"></div>01 · Repository</div>
+  <div class="nt" onclick="show('backend')"><div class="nt-dot" style="background:var(--gold)"></div>02 · Backend API</div>
+  <div class="nt" onclick="show('database')"><div class="nt-dot" style="background:var(--purple)"></div>03 · Database</div>
+  <div class="nt" onclick="show('pipeline')"><div class="nt-dot" style="background:var(--teal)"></div>04 · Data Pipeline</div>
+  <div class="nt" onclick="show('llm')"><div class="nt-dot" style="background:var(--orange)"></div>05 · LLM Engine</div>
+  <div class="nt" onclick="show('frontend')"><div class="nt-dot" style="background:var(--cyan)"></div>06 · Frontend PWA</div>
+  <div class="nt" onclick="show('messaging')"><div class="nt-dot" style="background:var(--red)"></div>07 · Messaging</div>
+  <div class="nt" onclick="show('deploy')"><div class="nt-dot" style="background:var(--green)"></div>08 · Deployment</div>
+  <div class="nt" onclick="show('checklist')"><div class="nt-dot" style="background:var(--gold)"></div>09 · Build Checklist</div>
+</div>
+
+<div class="page">
+
+<!-- ══ 00 OVERVIEW ══ -->
+<div class="sec active" id="sec-overview">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--green)">System Overview</div>
+    <div class="sh-title">Full Technical Architecture</div>
+    <div class="sh-desc">Every layer of the VAANI V3 system — what it is, what it does, what tech stack it uses, and how it connects to everything else.</div>
+  </div>
+
+  <div class="flow-wrap">
+    <div class="flow">
+      <div class="fn2" style="border-top:2px solid var(--blue)">
+        <div class="fn2-step">Layer 1</div>
+        <div class="fn2-title">Data Ingestion</div>
+        <div class="fn2-body">Weather API, NDVI satellite, pest bulletins, crop calendars, Syngenta CRM, farmer pulse reports. Apache Airflow schedules every 6 hours.</div>
+        <div class="fn2-bar" style="background:var(--blue)"></div>
+      </div>
+      <div class="fa2">→</div>
+      <div class="fn2" style="border-top:2px solid var(--purple)">
+        <div class="fn2-step">Layer 2</div>
+        <div class="fn2-title">Intelligence Engine</div>
+        <div class="fn2-body">Territory scoring, emotion classifier, content generation (LLM), visit routing (TSP), anomaly detection, champion rewards engine.</div>
+        <div class="fn2-bar" style="background:var(--purple)"></div>
+      </div>
+      <div class="fa2">→</div>
+      <div class="fn2" style="border-top:2px solid var(--gold)">
+        <div class="fn2-step">Layer 3</div>
+        <div class="fn2-title">API Layer</div>
+        <div class="fn2-body">FastAPI REST backend. Endpoints for rep app, dealer WhatsApp webhooks, farmer pulse responses, management dashboard. JWT auth.</div>
+        <div class="fn2-bar" style="background:var(--gold)"></div>
+      </div>
+      <div class="fa2">→</div>
+      <div class="fn2" style="border-top:2px solid var(--green)">
+        <div class="fn2-step">Layer 4</div>
+        <div class="fn2-title">Delivery Layer</div>
+        <div class="fn2-body">Rep PWA app (React + SQLite offline). WhatsApp Business API (Twilio). IVR calls (Exotel). SMS (MSG91). Management dashboard.</div>
+        <div class="fn2-bar" style="background:var(--green)"></div>
+      </div>
+      <div class="fa2">→</div>
+      <div class="fn2" style="border-top:2px solid var(--red)">
+        <div class="fn2-step">Layer 5</div>
+        <div class="fn2-title">Learning Loop</div>
+        <div class="fn2-body">Visit outcomes → memory DB update. Pulse reports → territory score recalibration. Champion referrals → rewards engine. Weekly model retrain.</div>
+        <div class="fn2-bar" style="background:var(--red)"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-bottom:14px">
+    <div class="card cg"><div class="c-top"></div><div class="c-eye">Backend</div><div class="c-title">Python + FastAPI</div><div class="c-body">REST API server. Handles all business logic. Connects to DB, LLM, messaging services. Runs on AWS EC2 or Railway.</div></div>
+    <div class="card cb2"><div class="c-top"></div><div class="c-eye">Database</div><div class="c-title">PostgreSQL + Redis</div><div class="c-body">PostgreSQL for all persistent data — farmers, memory, visits, scores. Redis for caching hot data and task queues.</div></div>
+    <div class="card cgo"><div class="c-top"></div><div class="c-eye">LLM</div><div class="c-title">Claude API + LangChain</div><div class="c-body">Content generation engine. LangChain orchestrates prompts. IndicTrans2 for Indian language translation. Runs per-request.</div></div>
+    <div class="card cp"><div class="c-top"></div><div class="c-eye">Frontend — Rep App</div><div class="c-title">React + PWA + SQLite</div><div class="c-body">Progressive Web App. Offline-first using service workers + SQLite (via sql.js). Pre-downloads daily plan. Syncs when online.</div></div>
+    <div class="card ct2"><div class="c-top"></div><div class="c-eye">Messaging</div><div class="c-title">Twilio + Exotel + MSG91</div><div class="c-body">Twilio: WhatsApp Business API. Exotel: IVR outbound calls (India). MSG91: SMS gateway. All via REST API calls from backend.</div></div>
+    <div class="card co"><div class="c-top"></div><div class="c-eye">Data Pipeline</div><div class="c-title">Apache Airflow</div><div class="c-body">Schedules and orchestrates all data ingestion tasks. Weather every 6h, pest bulletins daily, NDVI weekly, model retrain weekly.</div></div>
+  </div>
+
+  <table class="tbl">
+    <thead><tr><th>Component</th><th>Technology</th><th>Why This Choice</th><th>Free/Paid</th><th>Estimated Cost</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Backend Framework</strong></td><td>Python + FastAPI</td><td>Fast, async, auto-generates API docs, Python ecosystem for ML</td><td>Free (open source)</td><td>₹0</td></tr>
+      <tr><td><strong>Primary Database</strong></td><td>PostgreSQL</td><td>Relational, handles complex queries, JSON support for memory records</td><td>Free (open source)</td><td>₹0 (self-hosted)</td></tr>
+      <tr><td><strong>Cache + Queue</strong></td><td>Redis</td><td>In-memory speed for hot data, Celery task queue backend</td><td>Free (open source)</td><td>₹0 (self-hosted)</td></tr>
+      <tr><td><strong>LLM</strong></td><td>Anthropic Claude API</td><td>Best instruction following, multilingual capability, safe outputs</td><td>Paid per token</td><td>~₹500-2000/day at scale</td></tr>
+      <tr><td><strong>Translation</strong></td><td>IndicTrans2 (local) / Google Translate API</td><td>IndicTrans2 best for Indian languages; Google as fallback</td><td>IndicTrans2 free; Google paid</td><td>~₹0.01/request (Google)</td></tr>
+      <tr><td><strong>WhatsApp</strong></td><td>Twilio WhatsApp Business API</td><td>Most reliable, good webhook support, easy integration</td><td>Paid per message</td><td>~₹0.80/message</td></tr>
+      <tr><td><strong>IVR Calls</strong></td><td>Exotel</td><td>India-specific, supports all Indian languages, cheap per minute</td><td>Paid per minute</td><td>~₹0.30/min</td></tr>
+      <tr><td><strong>SMS</strong></td><td>MSG91</td><td>India-focused, cheap, DLT registered for transactional SMS</td><td>Paid per SMS</td><td>~₹0.15/SMS</td></tr>
+      <tr><td><strong>Rep Frontend</strong></td><td>React + Vite + Tailwind</td><td>Fast build, component reuse, offline PWA support</td><td>Free (open source)</td><td>₹0</td></tr>
+      <tr><td><strong>Offline Storage</strong></td><td>sql.js (SQLite in browser)</td><td>Full SQL in browser, no native app needed, works as PWA</td><td>Free (open source)</td><td>₹0</td></tr>
+      <tr><td><strong>Data Pipeline</strong></td><td>Apache Airflow</td><td>Industry standard, visual DAG editor, retry logic built in</td><td>Free (open source)</td><td>₹0</td></tr>
+      <tr><td><strong>ML Models</strong></td><td>Scikit-learn + OR-Tools</td><td>Scikit for scoring/classification, OR-Tools for routing (TSP)</td><td>Free (open source)</td><td>₹0</td></tr>
+      <tr><td><strong>Hosting</strong></td><td>AWS EC2 / Railway.app</td><td>Railway for dev/staging (free tier), EC2 for production</td><td>Railway free; EC2 paid</td><td>~₹3,000-8,000/month</td></tr>
+      <tr><td><strong>Weather API</strong></td><td>OpenWeatherMap</td><td>Free tier covers 60 calls/min, Indian district data available</td><td>Free tier available</td><td>₹0 (free tier)</td></tr>
+      <tr><td><strong>Satellite Data</strong></td><td>Google Earth Engine</td><td>Free for research/education, Sentinel-2 NDVI access</td><td>Free (edu)</td><td>₹0</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ══ 01 REPOSITORY ══ -->
+<div class="sec" id="sec-repo">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--blue)">Step 01</div>
+    <div class="sh-title">Repository Setup</div>
+    <div class="sh-desc">From zero to a working monorepo with proper structure, environment setup, and version control. Every command you need to run.</div>
+  </div>
+
+  <div class="sec-lbl">1.1 — Create GitHub Repository</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="cm"># Go to github.com → New Repository</span>
+<span class="cm"># Name: vaani-v3</span>
+<span class="cm"># Private repo (contains API keys later)</span>
+<span class="cm"># Initialize with README</span>
+
+<span class="cm"># Then clone it locally:</span>
+<span class="kw">git</span> clone https://github.com/YOUR_USERNAME/vaani-v3.git
+<span class="kw">cd</span> vaani-v3</pre></div>
+  </div>
+
+  <div class="sec-lbl">1.2 — Full Project Folder Structure</div>
+  <div class="tree">
+<span class="tr-dir">vaani-v3/</span>
+<span class="tr-dir" style="--indent:20px">├── backend/</span>               <span class="tr-comment">  # FastAPI Python server</span>
+<span class="tr-file" style="--indent:40px">│   ├── main.py</span>            <span class="tr-comment">  # FastAPI app entry point</span>
+<span class="tr-dir" style="--indent:40px">│   ├── api/</span>               <span class="tr-comment">  # All route handlers</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── reps.py</span>        <span class="tr-comment">  # Rep daily plan endpoints</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── farmers.py</span>     <span class="tr-comment">  # Farmer pulse endpoints</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── content.py</span>     <span class="tr-comment">  # Content generation endpoint</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── dealers.py</span>     <span class="tr-comment">  # Dealer intelligence endpoints</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── champions.py</span>   <span class="tr-comment">  # Champion rewards endpoints</span>
+<span class="tr-file" style="--indent:60px">│   │   └── webhooks.py</span>    <span class="tr-comment">  # Twilio/Exotel webhooks</span>
+<span class="tr-dir" style="--indent:40px">│   ├── models/</span>            <span class="tr-comment">  # Database models (SQLAlchemy)</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── farmer.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── memory.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── visit.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── district.py</span>
+<span class="tr-file" style="--indent:60px">│   │   └── champion.py</span>
+<span class="tr-dir" style="--indent:40px">│   ├── services/</span>          <span class="tr-comment">  # Business logic</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── territory_score.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── emotion_classifier.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── content_generator.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── visit_router.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── memory_service.py</span>
+<span class="tr-file" style="--indent:60px">│   │   └── messaging_service.py</span>
+<span class="tr-dir" style="--indent:40px">│   ├── pipeline/</span>          <span class="tr-comment">  # Airflow DAGs</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── weather_dag.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── pest_bulletin_dag.py</span>
+<span class="tr-file" style="--indent:60px">│   │   ├── ndvi_dag.py</span>
+<span class="tr-file" style="--indent:60px">│   │   └── daily_plan_dag.py</span>
+<span class="tr-file" style="--indent:40px">│   ├── requirements.txt</span>
+<span class="tr-file" style="--indent:40px">│   └── .env.example</span>
+<span class="tr-dir" style="--indent:20px">├── frontend/</span>              <span class="tr-comment">  # React PWA (Rep App)</span>
+<span class="tr-file" style="--indent:40px">│   ├── src/</span>
+<span class="tr-dir" style="--indent:60px">│   │   ├── components/</span>
+<span class="tr-dir" style="--indent:60px">│   │   ├── pages/</span>
+<span class="tr-dir" style="--indent:60px">│   │   ├── services/</span>     <span class="tr-comment">  # API calls + offline sync</span>
+<span class="tr-file" style="--indent:60px">│   │   └── db/</span>           <span class="tr-comment">  # SQLite offline layer</span>
+<span class="tr-file" style="--indent:40px">│   ├── public/</span>
+<span class="tr-file" style="--indent:40px">│   ├── package.json</span>
+<span class="tr-file" style="--indent:40px">│   └── vite.config.js</span>
+<span class="tr-dir" style="--indent:20px">├── dashboard/</span>             <span class="tr-comment">  # Management dashboard (React)</span>
+<span class="tr-dir" style="--indent:20px">├── ml/</span>                    <span class="tr-comment">  # ML model training scripts</span>
+<span class="tr-file" style="--indent:40px">│   ├── territory_model.py</span>
+<span class="tr-file" style="--indent:40px">│   ├── emotion_model.py</span>
+<span class="tr-file" style="--indent:40px">│   └── champion_identifier.py</span>
+<span class="tr-dir" style="--indent:20px">├── docker/</span>                <span class="tr-comment">  # Docker configs</span>
+<span class="tr-file" style="--indent:40px">│   ├── Dockerfile.backend</span>
+<span class="tr-file" style="--indent:40px">│   └── docker-compose.yml</span>
+<span class="tr-file" style="--indent:20px">├── .gitignore</span>
+<span class="tr-file" style="--indent:20px">└── README.md</span>
+  </div>
+
+  <div class="sec-lbl">1.3 — Python Environment Setup</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="cm"># Install Python 3.11 (recommended)</span>
+<span class="kw">python</span> --version  <span class="cm"># Should be 3.11+</span>
+
+<span class="cm"># Create virtual environment</span>
+<span class="kw">cd</span> vaani-v3/backend
+<span class="kw">python</span> -m venv venv
+
+<span class="cm"># Activate it</span>
+<span class="cm"># Mac/Linux:</span>
+<span class="kw">source</span> venv/bin/activate
+<span class="cm"># Windows:</span>
+<span class="kw">venv\Scripts\activate</span>
+
+<span class="cm"># Install all dependencies</span>
+<span class="kw">pip install</span> fastapi uvicorn sqlalchemy psycopg2-binary alembic \
+  redis celery langchain anthropic requests pandas scikit-learn \
+  ortools python-dotenv httpx pydantic apscheduler twilio</pre></div>
+  </div>
+
+  <div class="sec-lbl">1.4 — Environment Variables</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/.env</span><span class="cb-lang">env</span></div>
+    <div class="cb-body"><pre><span class="cm"># Database</span>
+<span class="nm">DATABASE_URL</span>=postgresql://vaani_user:password@localhost:5432/vaani_db
+<span class="nm">REDIS_URL</span>=redis://localhost:6379
+
+<span class="cm"># LLM</span>
+<span class="nm">ANTHROPIC_API_KEY</span>=sk-ant-your-key-here
+<span class="nm">GOOGLE_TRANSLATE_API_KEY</span>=your-key-here
+
+<span class="cm"># Weather</span>
+<span class="nm">OPENWEATHERMAP_API_KEY</span>=your-key-here
+
+<span class="cm"># Messaging</span>
+<span class="nm">TWILIO_ACCOUNT_SID</span>=your-sid-here
+<span class="nm">TWILIO_AUTH_TOKEN</span>=your-token-here
+<span class="nm">TWILIO_WHATSAPP_NUMBER</span>=whatsapp:+14155238886
+<span class="nm">EXOTEL_API_KEY</span>=your-exotel-key
+<span class="nm">EXOTEL_API_TOKEN</span>=your-exotel-token
+<span class="nm">EXOTEL_SUBDOMAIN</span>=your-subdomain
+<span class="nm">MSG91_API_KEY</span>=your-msg91-key
+
+<span class="cm"># Security</span>
+<span class="nm">JWT_SECRET_KEY</span>=your-super-secret-key-here-make-it-long
+<span class="nm">JWT_ALGORITHM</span>=HS256
+<span class="nm">ACCESS_TOKEN_EXPIRE_MINUTES</span>=1440
+
+<span class="cm"># App</span>
+<span class="nm">DEBUG</span>=True
+<span class="nm">ALLOWED_ORIGINS</span>=http://localhost:3000,http://localhost:5173</pre></div>
+  </div>
+
+  <div class="sec-lbl">1.5 — .gitignore</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">.gitignore</span><span class="cb-lang">gitignore</span></div>
+    <div class="cb-body"><pre><span class="cm"># Never commit these</span>
+.env
+venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.DS_Store
+*.egg-info/
+.pytest_cache/
+*.sqlite3</pre></div>
+  </div>
+</div>
+
+<!-- ══ 02 BACKEND API ══ -->
+<div class="sec" id="sec-backend">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--gold)">Step 02</div>
+    <div class="sh-title">Backend API — FastAPI</div>
+    <div class="sh-desc">The core server. Every endpoint, every service, every piece of business logic that makes VAANI work.</div>
+  </div>
+
+  <div class="sec-lbl">2.1 — FastAPI Main App Entry Point</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/main.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> fastapi.middleware.cors <span class="kw">import</span> CORSMiddleware
+<span class="kw">from</span> api <span class="kw">import</span> reps, farmers, content, dealers, champions, webhooks
+<span class="kw">from</span> database <span class="kw">import</span> engine, Base
+<span class="kw">import</span> os
+
+<span class="cm"># Create all database tables</span>
+Base.metadata.create_all(bind=engine)
+
+app = FastAPI(title=<span class="st">"VAANI V3 API"</span>, version=<span class="st">"3.0.0"</span>)
+
+<span class="cm"># CORS — allow rep app and dashboard to call API</span>
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.getenv(<span class="st">"ALLOWED_ORIGINS"</span>, <span class="st">""</span>).split(<span class="st">","</span>),
+    allow_credentials=<span class="kw">True</span>,
+    allow_methods=[<span class="st">"*"</span>],
+    allow_headers=[<span class="st">"*"</span>],
+)
+
+<span class="cm"># Register all route groups</span>
+app.include_router(reps.router,      prefix=<span class="st">"/api/reps"</span>,      tags=[<span class="st">"reps"</span>])
+app.include_router(farmers.router,   prefix=<span class="st">"/api/farmers"</span>,   tags=[<span class="st">"farmers"</span>])
+app.include_router(content.router,   prefix=<span class="st">"/api/content"</span>,   tags=[<span class="st">"content"</span>])
+app.include_router(dealers.router,   prefix=<span class="st">"/api/dealers"</span>,   tags=[<span class="st">"dealers"</span>])
+app.include_router(champions.router, prefix=<span class="st">"/api/champions"</span>, tags=[<span class="st">"champions"</span>])
+app.include_router(webhooks.router,  prefix=<span class="st">"/webhooks"</span>,      tags=[<span class="st">"webhooks"</span>])
+
+<span class="kw">@app</span>.get(<span class="st">"/"</span>)
+<span class="kw">def</span> <span class="fn">health_check</span>():
+    <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"VAANI V3 running"</span>}
+
+<span class="cm"># Run: uvicorn main:app --reload</span></pre></div>
+  </div>
+
+  <div class="sec-lbl">2.2 — Rep Daily Plan Endpoint (Most Important)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/api/reps.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, Depends, HTTPException
+<span class="kw">from</span> services.visit_router <span class="kw">import</span> build_daily_plan
+<span class="kw">from</span> services.memory_service <span class="kw">import</span> get_farmer_memory
+<span class="kw">from</span> services.territory_score <span class="kw">import</span> get_district_score
+<span class="kw">from</span> auth <span class="kw">import</span> get_current_rep
+<span class="kw">from</span> models.visit <span class="kw">import</span> VisitOutcome
+<span class="kw">from</span> database <span class="kw">import</span> get_db
+
+router = APIRouter()
+
+<span class="kw">@router</span>.get(<span class="st">"/daily-plan/{rep_id}"</span>)
+<span class="kw">async def</span> <span class="fn">get_daily_plan</span>(
+    rep_id: <span class="ty">int</span>,
+    current_rep=Depends(get_current_rep),
+    db=Depends(get_db)
+):
+    <span class="st">"""
+    Returns rep's full day:
+    - Territory-scoped stops only (rep's assigned districts)
+    - All 5 stop types: DEALER, FARMER, CHAMPION, INSTITUTIONAL
+    - Each stop has: memory brief, talking points, emotion mode
+    - Optimized route order (TSP + urgency weights)
+    """</span>
+    <span class="cm"># Security: rep can only see their own plan</span>
+    <span class="kw">if</span> current_rep.id != rep_id:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="nm">403</span>, detail=<span class="st">"Access denied"</span>)
+
+    plan = build_daily_plan(rep_id=rep_id, db=db)
+    <span class="kw">return</span> plan
+
+<span class="kw">@router</span>.post(<span class="st">"/log-visit"</span>)
+<span class="kw">async def</span> <span class="fn">log_visit_outcome</span>(
+    outcome: VisitOutcome,
+    current_rep=Depends(get_current_rep),
+    db=Depends(get_db)
+):
+    <span class="st">"""
+    Rep taps 3 buttons after each visit → logs outcome.
+    Automatically triggers:
+    - Memory DB update (if farmer visit)
+    - Inventory update (if dealer visit)
+    - Rewards engine update (if champion visit)
+    - Territory score recalibration
+    """</span>
+    result = log_outcome_and_update(outcome, db)
+    <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"logged"</span>, <span class="st">"updates"</span>: result}
+
+<span class="kw">@router</span>.get(<span class="st">"/offline-package/{rep_id}"</span>)
+<span class="kw">async def</span> <span class="fn">get_offline_package</span>(rep_id: <span class="ty">int</span>, db=Depends(get_db)):
+    <span class="st">"""
+    Called every morning when rep is on WiFi.
+    Returns complete day's data as one JSON blob.
+    Rep app stores this in SQLite — works all day offline.
+    """</span>
+    package = build_offline_package(rep_id, db)
+    <span class="kw">return</span> package  <span class="cm"># ~200KB compressed — fast download</span></pre></div>
+  </div>
+
+  <div class="sec-lbl">2.3 — Farmer Pulse Endpoint</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/api/farmers.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">@router</span>.post(<span class="st">"/pulse-response"</span>)
+<span class="kw">async def</span> <span class="fn">receive_pulse_response</span>(
+    farmer_phone: <span class="ty">str</span>,
+    response: <span class="ty">int</span>,  <span class="cm"># 1=healthy, 2=mild, 3=severe</span>
+    db=Depends(get_db)
+):
+    <span class="st">"""
+    Called when farmer replies to WhatsApp check-in or presses IVR key.
+    Updates: farmer memory + territory pulse score + triggers actions.
+    """</span>
+    farmer = get_farmer_by_phone(farmer_phone, db)
+
+    <span class="cm"># Update memory record</span>
+    update_memory(farmer.id, {
+        <span class="st">"last_pulse_response"</span>: response,
+        <span class="st">"last_pulse_date"</span>: datetime.now(),
+        <span class="st">"last_reported_condition"</span>: [<span class="st">"healthy"</span>, <span class="st">"mild"</span>, <span class="st">"severe"</span>][response-<span class="nm">1</span>]
+    }, db)
+
+    <span class="cm"># Update territory pulse score</span>
+    update_pulse_count(farmer.district_id, response, db)
+
+    <span class="cm"># Auto-trigger actions based on response</span>
+    <span class="kw">if</span> response >= <span class="nm">2</span>:
+        <span class="cm"># Brief the nearest dealer</span>
+        trigger_dealer_brief(farmer.nearest_dealer_id, farmer, db)
+    <span class="kw">if</span> response == <span class="nm">3</span>:
+        <span class="cm"># Emergency — add farmer field visit to rep's plan</span>
+        add_urgent_visit(farmer, db)
+        <span class="cm"># Alert management dashboard</span>
+        send_emergency_alert(farmer, db)
+
+    <span class="cm"># Send follow-up message to farmer</span>
+    followup = generate_followup_message(farmer, response)
+    send_whatsapp(farmer.phone, followup)
+
+    <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"processed"</span>}</pre></div>
+  </div>
+
+  <div class="sec-lbl">2.4 — Content Generation Endpoint</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/api/content.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">@router</span>.post(<span class="st">"/generate"</span>)
+<span class="kw">async def</span> <span class="fn">generate_content</span>(request: ContentRequest, db=Depends(get_db)):
+    <span class="st">"""
+    Core content generation endpoint.
+    Called by: Airflow daily (bulk), or manually (demo).
+    Returns: ready-to-send message for specified tier + language.
+    """</span>
+    <span class="cm"># 1. Build context object from all data sources</span>
+    context = {
+        <span class="st">"district"</span>: request.district,
+        <span class="st">"crop"</span>: request.crop,
+        <span class="st">"stage"</span>: request.stage,
+        <span class="st">"pest"</span>: get_active_pest(request.district_id, db),
+        <span class="st">"territory_score"</span>: get_territory_score(request.district_id, db),
+        <span class="st">"emotional_mode"</span>: get_emotional_mode(request.district_id, db),
+        <span class="st">"weather"</span>: get_weather_data(request.district, db),
+        <span class="st">"memory"</span>: get_farmer_memory(request.farmer_id, db) <span class="kw">if</span> request.farmer_id <span class="kw">else</span> <span class="kw">None</span>,
+        <span class="st">"voice_persona"</span>: request.voice_persona,
+        <span class="st">"language"</span>: request.language,
+        <span class="st">"trust_level"</span>: request.trust_level,
+    }
+
+    <span class="cm"># 2. Generate with LLM</span>
+    content = generate_with_llm(context)
+
+    <span class="cm"># 3. Translate to target language</span>
+    translated = translate_to_language(content, request.language)
+
+    <span class="cm"># 4. Format for delivery channel</span>
+    formatted = format_for_channel(translated, request.channel)
+
+    <span class="kw">return</span> {<span class="st">"content"</span>: formatted, <span class="st">"context_used"</span>: context}</pre></div>
+  </div>
+
+  <div class="sec-lbl">2.5 — Run the Backend</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="kw">cd</span> backend
+<span class="kw">uvicorn</span> main:app --reload --port 8000
+
+<span class="cm"># Visit: http://localhost:8000/docs</span>
+<span class="cm"># FastAPI auto-generates interactive API documentation</span>
+<span class="cm"># You can test every endpoint from the browser</span></pre></div>
+  </div>
+</div>
+
+<!-- ══ 03 DATABASE ══ -->
+<div class="sec" id="sec-database">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--purple)">Step 03</div>
+    <div class="sh-title">Database Design</div>
+    <div class="sh-desc">PostgreSQL schema for every table VAANI needs. Every relationship, every field, every index. The memory DB is the most important part.</div>
+  </div>
+
+  <div class="sec-lbl">3.1 — Install and Create Database</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="cm"># Install PostgreSQL (Mac)</span>
+<span class="kw">brew install</span> postgresql@15
+<span class="kw">brew services start</span> postgresql@15
+
+<span class="cm"># Install PostgreSQL (Ubuntu/Debian)</span>
+<span class="kw">sudo apt install</span> postgresql postgresql-contrib
+
+<span class="cm"># Create database and user</span>
+<span class="kw">psql postgres</span>
+<span class="kw">CREATE DATABASE</span> vaani_db;
+<span class="kw">CREATE USER</span> vaani_user <span class="kw">WITH PASSWORD</span> <span class="st">'your-password'</span>;
+<span class="kw">GRANT ALL PRIVILEGES ON DATABASE</span> vaani_db <span class="kw">TO</span> vaani_user;
+<span class="kw">\q</span></pre></div>
+  </div>
+
+  <div class="sec-lbl">3.2 — Core Database Models</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/models/farmer.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">from</span> sqlalchemy <span class="kw">import</span> Column, Integer, String, Float, JSON, DateTime, ForeignKey
+<span class="kw">from</span> database <span class="kw">import</span> Base
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">class</span> <span class="ty">Farmer</span>(Base):
+    __tablename__ = <span class="st">"farmers"</span>
+
+    id            = Column(Integer, primary_key=<span class="kw">True</span>)
+    name          = Column(String)
+    phone         = Column(String, unique=<span class="kw">True</span>, index=<span class="kw">True</span>)
+    district_id   = Column(Integer, ForeignKey(<span class="st">"districts.id"</span>))
+    village       = Column(String)
+    crop          = Column(String)
+    land_acres    = Column(Float)
+    language      = Column(String)          <span class="cm"># Telugu, Hindi, etc.</span>
+    phone_type    = Column(String)          <span class="cm"># smartphone / feature</span>
+    trust_level   = Column(String, default=<span class="st">"cold"</span>)  <span class="cm"># cold/warm/trusted</span>
+    preferred_time = Column(String)         <span class="cm"># morning / evening</span>
+    created_at    = Column(DateTime, default=datetime.now)
+    is_champion   = Column(Integer, default=<span class="nm">0</span>)
+    nearest_dealer_id = Column(Integer, ForeignKey(<span class="st">"dealers.id"</span>))
+
+
+<span class="kw">class</span> <span class="ty">FarmerMemory</span>(Base):
+    __tablename__ = <span class="st">"farmer_memory"</span>
+    <span class="cm"># ★ Most important table in the entire system</span>
+
+    id                   = Column(Integer, primary_key=<span class="kw">True</span>)
+    farmer_id            = Column(Integer, ForeignKey(<span class="st">"farmers.id"</span>), index=<span class="kw">True</span>)
+    season               = Column(String)   <span class="cm"># "kharif_2025", "rabi_2025"</span>
+    last_problem         = Column(String)   <span class="cm"># "yellowing in east plot"</span>
+    last_problem_date    = Column(DateTime)
+    last_outcome         = Column(String)   <span class="cm"># "Actara 25WG — full recovery"</span>
+    last_product_used    = Column(String)
+    last_pulse_response  = Column(Integer)  <span class="cm"># 1/2/3</span>
+    last_pulse_date      = Column(DateTime)
+    pulse_count_season   = Column(Integer, default=<span class="nm">0</span>)
+    touchpoint_number    = Column(Integer, default=<span class="nm">0</span>)  <span class="cm"># which of 12 we're on</span>
+    sowing_date          = Column(DateTime)
+    variety_planted      = Column(String)
+    notes                = Column(String)   <span class="cm"># Rep's free-text notes</span>
+    updated_at           = Column(DateTime, default=datetime.now, onupdate=datetime.now)</pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/models/district.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">class</span> <span class="ty">District</span>(Base):
+    __tablename__ = <span class="st">"districts"</span>
+
+    id               = Column(Integer, primary_key=<span class="kw">True</span>)
+    name             = Column(String)
+    state            = Column(String)
+    lat              = Column(Float)
+    lon              = Column(Float)
+    <span class="cm"># Territory Health Score components (updated every 6 hours)</span>
+    pest_score       = Column(Float, default=<span class="nm">0</span>)
+    weather_score    = Column(Float, default=<span class="nm">0</span>)
+    stage_score      = Column(Float, default=<span class="nm">0</span>)
+    pulse_score      = Column(Float, default=<span class="nm">0</span>)  <span class="cm"># ★ New in V3</span>
+    composite_score  = Column(Float, default=<span class="nm">0</span>)
+    urgency          = Column(String, default=<span class="st">"LOW"</span>)
+    <span class="cm"># ★ V3 Emotional Mode</span>
+    emotional_mode   = Column(String, default=<span class="st">"stable"</span>)  <span class="cm"># panic/stable/recover/confident</span>
+    panic_report_count = Column(Integer, default=<span class="nm">0</span>)
+    panic_threshold  = Column(Integer, default=<span class="nm">5</span>)   <span class="cm"># reports in 48h to trigger panic</span>
+    active_pest      = Column(String)
+    active_disease   = Column(String)
+    score_updated_at = Column(DateTime)</pre></div>
+  </div>
+
+  <div class="sec-lbl">3.3 — Database Migrations with Alembic</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="cm"># Initialize Alembic (one time)</span>
+<span class="kw">cd</span> backend
+<span class="kw">alembic init</span> alembic
+
+<span class="cm"># Edit alembic.ini — set sqlalchemy.url to your DATABASE_URL</span>
+
+<span class="cm"># Create a migration</span>
+<span class="kw">alembic revision</span> --autogenerate -m <span class="st">"initial tables"</span>
+
+<span class="cm"># Apply migration to database</span>
+<span class="kw">alembic upgrade</span> head
+
+<span class="cm"># Every time you change a model, run:</span>
+<span class="kw">alembic revision</span> --autogenerate -m <span class="st">"describe your change"</span>
+<span class="kw">alembic upgrade</span> head</pre></div>
+  </div>
+
+  <div class="sec-lbl">3.4 — Redis Setup (Cache + Task Queue)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="cm"># Install Redis</span>
+<span class="cm"># Mac:</span>
+<span class="kw">brew install</span> redis
+<span class="kw">brew services start</span> redis
+
+<span class="cm"># Ubuntu:</span>
+<span class="kw">sudo apt install</span> redis-server
+<span class="kw">sudo systemctl start</span> redis
+
+<span class="cm"># Test:</span>
+<span class="kw">redis-cli ping</span>  <span class="cm"># Should return PONG</span>
+
+<span class="cm"># What Redis stores in VAANI:</span>
+<span class="cm"># - District health scores (TTL: 6 hours)</span>
+<span class="cm"># - Emotional mode per district (TTL: 24 hours)</span>
+<span class="cm"># - Generated content cache (TTL: 1 hour)</span>
+<span class="cm"># - Active Celery task queue for bulk messaging</span></pre></div>
+  </div>
+</div>
+
+<!-- ══ 04 DATA PIPELINE ══ -->
+<div class="sec" id="sec-pipeline">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--teal)">Step 04</div>
+    <div class="sh-title">Data Pipeline — Apache Airflow</div>
+    <div class="sh-desc">How VAANI automatically pulls weather, satellite, pest data every 6 hours and updates territory scores. The engine that makes the system intelligent.</div>
+  </div>
+
+  <div class="sec-lbl">4.1 — Install Airflow</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="kw">pip install</span> apache-airflow
+
+<span class="cm"># Initialize Airflow database</span>
+<span class="kw">airflow db</span> init
+
+<span class="cm"># Create admin user</span>
+<span class="kw">airflow users create</span> \
+  --username admin \
+  --password admin \
+  --firstname VAANI \
+  --lastname Admin \
+  --role Admin \
+  --email admin@vaani.ai
+
+<span class="cm"># Start Airflow (needs 2 terminals)</span>
+<span class="kw">airflow webserver</span> --port 8080  <span class="cm"># Terminal 1</span>
+<span class="kw">airflow scheduler</span>              <span class="cm"># Terminal 2</span>
+
+<span class="cm"># Open: http://localhost:8080</span></pre></div>
+  </div>
+
+  <div class="sec-lbl">4.2 — Weather Data DAG (Runs Every 6 Hours)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/pipeline/weather_dag.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">from</span> airflow <span class="kw">import</span> DAG
+<span class="kw">from</span> airflow.operators.python <span class="kw">import</span> PythonOperator
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+<span class="kw">import</span> requests, os
+
+DISTRICTS = [
+    {<span class="st">"name"</span>: <span class="st">"Krishna"</span>, <span class="st">"lat"</span>: <span class="nm">16.57</span>, <span class="st">"lon"</span>: <span class="nm">80.96</span>},
+    {<span class="st">"name"</span>: <span class="st">"Guntur"</span>,  <span class="st">"lat"</span>: <span class="nm">16.30</span>, <span class="st">"lon"</span>: <span class="nm">80.43</span>},
+    <span class="cm"># ... all 20 districts</span>
+]
+
+<span class="kw">def</span> <span class="fn">fetch_weather_for_all_districts</span>():
+    api_key = os.getenv(<span class="st">"OPENWEATHERMAP_API_KEY"</span>)
+    results = []
+    <span class="kw">for</span> d <span class="kw">in</span> DISTRICTS:
+        url = <span class="st">f"https://api.openweathermap.org/data/2.5/weather?lat={d['lat']}&lon={d['lon']}&appid={api_key}"</span>
+        r = requests.get(url).json()
+        results.append({
+            <span class="st">"district"</span>: d[<span class="st">"name"</span>],
+            <span class="st">"temp"</span>: r[<span class="st">"main"</span>][<span class="st">"temp"</span>] - <span class="nm">273.15</span>,
+            <span class="st">"humidity"</span>: r[<span class="st">"main"</span>][<span class="st">"humidity"</span>],
+            <span class="st">"rainfall"</span>: r.get(<span class="st">"rain"</span>, {}).get(<span class="st">"1h"</span>, <span class="nm">0</span>),
+            <span class="st">"timestamp"</span>: datetime.now().isoformat()
+        })
+    <span class="cm"># Store in PostgreSQL</span>
+    save_weather_data(results)
+    <span class="cm"># Trigger territory score recalculation</span>
+    recalculate_all_territory_scores()
+
+<span class="kw">with</span> DAG(
+    <span class="st">"vaani_weather_pipeline"</span>,
+    schedule_interval=<span class="st">"0 */6 * * *"</span>,  <span class="cm"># Every 6 hours</span>
+    start_date=datetime(<span class="nm">2026</span>, <span class="nm">5</span>, <span class="nm">13</span>),
+    catchup=<span class="kw">False</span>
+) <span class="kw">as</span> dag:
+
+    fetch_task = PythonOperator(
+        task_id=<span class="st">"fetch_weather"</span>,
+        python_callable=fetch_weather_for_all_districts
+    )</pre></div>
+  </div>
+
+  <div class="sec-lbl">4.3 — Territory Score Calculation (The Core Logic)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/services/territory_score.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">def</span> <span class="fn">calculate_territory_score</span>(district_id: <span class="ty">int</span>, db) -> <span class="ty">dict</span>:
+    <span class="st">"""
+    Composite score from 5 signals.
+    Returns score 0-100 + urgency level + emotional mode.
+    """</span>
+    district = db.query(District).filter_by(id=district_id).first()
+
+    <span class="cm"># Signal 1: Pest Risk (35% weight)</span>
+    pest_score = get_active_pest_severity(district_id, db) * <span class="nm">0.35</span>
+
+    <span class="cm"># Signal 2: Weather Risk (25% weight)</span>
+    weather = get_latest_weather(district_id, db)
+    humidity_risk = min(weather.humidity / <span class="nm">100</span>, <span class="nm">1.0</span>)
+    rainfall_deviation = get_rainfall_deviation(district_id, db)
+    weather_score = (humidity_risk * <span class="nm">0.5</span> + rainfall_deviation * <span class="nm">0.5</span>) * <span class="nm">25</span>
+
+    <span class="cm"># Signal 3: Crop Stage Urgency (25% weight)</span>
+    stage = get_current_crop_stage(district_id, db)
+    STAGE_WEIGHTS = {<span class="st">"Tillering"</span>: <span class="nm">0.9</span>, <span class="st">"Flowering"</span>: <span class="nm">1.0</span>, <span class="st">"Vegetative"</span>: <span class="nm">0.6</span>}
+    stage_score = STAGE_WEIGHTS.get(stage, <span class="nm">0.5</span>) * <span class="nm">25</span>
+
+    <span class="cm"># Signal 4: Farmer Pulse Reports (15% weight) ★ V3 Addition</span>
+    recent_reports = get_pulse_reports_48h(district_id, db)
+    severe_reports = [r <span class="kw">for</span> r <span class="kw">in</span> recent_reports <span class="kw">if</span> r.response == <span class="nm">3</span>]
+    pulse_score = min(len(severe_reports) / <span class="nm">10</span>, <span class="nm">1.0</span>) * <span class="nm">15</span>
+
+    composite = pest_score + weather_score + stage_score + pulse_score
+
+    <span class="cm"># Determine urgency</span>
+    urgency = (<span class="st">"CRITICAL"</span> <span class="kw">if</span> composite >= <span class="nm">80</span>
+               <span class="kw">else</span> <span class="st">"HIGH"</span> <span class="kw">if</span> composite >= <span class="nm">65</span>
+               <span class="kw">else</span> <span class="st">"MEDIUM"</span> <span class="kw">if</span> composite >= <span class="nm">40</span>
+               <span class="kw">else</span> <span class="st">"LOW"</span>)
+
+    <span class="cm"># ★ V3: Determine emotional mode</span>
+    panic_count = district.panic_report_count
+    emotional_mode = (<span class="st">"panic"</span>     <span class="kw">if</span> panic_count >= <span class="nm">5</span>
+                     <span class="kw">else</span> <span class="st">"recover"</span>  <span class="kw">if</span> composite > <span class="nm">50</span> <span class="kw">and</span> composite < <span class="nm">65</span>
+                     <span class="kw">else</span> <span class="st">"confident"</span> <span class="kw">if</span> composite < <span class="nm">30</span>
+                     <span class="kw">else</span> <span class="st">"stable"</span>)
+
+    <span class="kw">return</span> {<span class="st">"score"</span>: round(composite, <span class="nm">1</span>), <span class="st">"urgency"</span>: urgency, <span class="st">"mode"</span>: emotional_mode}</pre></div>
+  </div>
+
+  <div class="sec-lbl">4.4 — Daily Plan Generation (Runs 6 AM Every Day)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/pipeline/daily_plan_dag.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">def</span> <span class="fn">generate_all_rep_plans</span>():
+    <span class="st">"""
+    Runs at 6 AM daily.
+    Generates optimized daily plan for every rep.
+    Result stored in Redis — rep downloads on morning WiFi.
+    """</span>
+    reps = get_all_active_reps(db)
+    <span class="kw">for</span> rep <span class="kw">in</span> reps:
+        plan = build_daily_plan(rep.id, db)
+        <span class="cm"># Cache in Redis — TTL 24 hours</span>
+        redis_client.setex(
+            <span class="st">f"daily_plan:{rep.id}"</span>,
+            <span class="nm">86400</span>,  <span class="cm"># 24 hours in seconds</span>
+            json.dumps(plan)
+        )
+
+<span class="kw">with</span> DAG(<span class="st">"vaani_daily_plans"</span>, schedule_interval=<span class="st">"0 6 * * *"</span>) <span class="kw">as</span> dag:
+    generate = PythonOperator(task_id=<span class="st">"generate_plans"</span>, python_callable=generate_all_rep_plans)</pre></div>
+  </div>
+</div>
+
+<!-- ══ 05 LLM ENGINE ══ -->
+<div class="sec" id="sec-llm">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--orange)">Step 05</div>
+    <div class="sh-title">LLM Content Engine</div>
+    <div class="sh-desc">How the content generator actually works — LangChain orchestration, Claude API calls, voice personas, translation pipeline.</div>
+  </div>
+
+  <div class="sec-lbl">5.1 — Content Generator Service</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/services/content_generator.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">import</span> anthropic
+<span class="kw">from</span> langchain.prompts <span class="kw">import</span> ChatPromptTemplate
+<span class="kw">import</span> os
+
+client = anthropic.Anthropic(api_key=os.getenv(<span class="st">"ANTHROPIC_API_KEY"</span>))
+
+VOICE_PERSONAS = {
+    <span class="st">"dealer"</span>: <span class="st">"a busy local agrochemical shopkeeper — practical, street-smart, uses casual regional business language, brief sentences, no corporate tone"</span>,
+    <span class="st">"rep"</span>: <span class="st">"a confident Syngenta field agronomist — knowledgeable, direct, uses field terminology, gives clear action steps"</span>,
+    <span class="st">"champion"</span>: <span class="st">"an enthusiastic farmer sharing personal experience — first-person, slight natural repetition, informal phrasing, genuine excitement"</span>,
+    <span class="st">"vaani"</span>: <span class="st">"a caring seasonal companion — warm, remembers past conversations, never corporate, never pushy"</span>,
+    <span class="st">"elder"</span>: <span class="st">"a wise village elder — slow measured pace, references seasonal history, calm reassuring authority, deliberate pauses"</span>,
+    <span class="st">"farmer"</span>: <span class="st">"a genuine care-first outreach — never sells, checks on crop health, builds trust through consistency"</span>
+}
+
+EMOTIONAL_MODE_RULES = {
+    <span class="st">"panic"</span>:     <span class="st">"STABILIZE FIRST. No product mention in first message. Lead with honest situation assessment. Calm authority tone."</span>,
+    <span class="st">"stable"</span>:    <span class="st">"Normal informational tone. Practical advice. Product recommendation appropriate if relevant."</span>,
+    <span class="st">"recover"</span>:   <span class="st">"Acknowledge difficulty first. Empathy before solutions. Recovery steps. Product as revival tool."</span>,
+    <span class="st">"confident"</span>: <span class="st">"Celebratory tone. Forward-looking. Next season planning. Product as preparation, not emergency."</span>
+}
+
+<span class="kw">def</span> <span class="fn">generate_with_llm</span>(context: <span class="ty">dict</span>) -> <span class="ty">str</span>:
+    voice = context[<span class="st">"voice_persona"</span>]
+    mode = context[<span class="st">"emotional_mode"</span>]
+    memory = context.get(<span class="st">"memory"</span>, {})
+    trust = context.get(<span class="st">"trust_level"</span>, <span class="st">"cold"</span>)
+
+    <span class="cm"># Build memory reference if available</span>
+    memory_ref = <span class="st">""</span>
+    <span class="kw">if</span> memory <span class="kw">and</span> trust <span class="kw">in</span> [<span class="st">"warm"</span>, <span class="st">"trusted"</span>]:
+        memory_ref = <span class="st">f"Previous interaction: {memory.get('last_problem', '')}. Outcome: {memory.get('last_outcome', '')}. Reference this naturally."</span>
+
+    system_prompt = <span class="st">f"""You are generating agricultural communication content for VAANI.
+You are speaking as: {VOICE_PERSONAS.get(voice, VOICE_PERSONAS['vaani'])}
+
+EMOTIONAL MODE RULE: {EMOTIONAL_MODE_RULES.get(mode, EMOTIONAL_MODE_RULES['stable'])}
+
+TRUST LEVEL: {trust}
+- cold: NO product mention. Pure value and care only.
+- warm: Soft product reference acceptable if highly relevant.
+- trusted: Natural product recommendation appropriate.
+
+{f'MEMORY CONTEXT: {memory_ref}' if memory_ref else ''}
+
+CONTENT RULES:
+1. Open with a hook that creates curiosity — never with product name
+2. Slight controlled imperfection matches the voice persona
+3. Keep it conversational — never formal corporate language
+4. Product mention only after establishing genuine relevance
+5. End with care, not a call-to-action"""</span>
+
+    user_prompt = <span class="st">f"""Generate content for:
+District: {context['district']}
+Crop: {context['crop']} | Stage: {context['stage']}
+Active threat: {context.get('pest', 'general monitoring')}
+Territory score: {context.get('territory_score', 50)}/100
+Weather: {context.get('weather', {}).get('condition', 'normal')}
+Language: Generate in English first (will be translated)
+
+Generate the message now. 80-150 words maximum."""</span>
+
+    message = client.messages.create(
+        model=<span class="st">"claude-sonnet-4-20250514"</span>,
+        max_tokens=<span class="nm">400</span>,
+        system=system_prompt,
+        messages=[{<span class="st">"role"</span>: <span class="st">"user"</span>, <span class="st">"content"</span>: user_prompt}]
+    )
+    <span class="kw">return</span> message.content[<span class="nm">0</span>].text</pre></div>
+  </div>
+
+  <div class="sec-lbl">5.2 — Translation Pipeline (English → Indian Languages)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/services/translation.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">from</span> google.cloud <span class="kw">import</span> translate_v2 <span class="kw">as</span> translate
+<span class="kw">import</span> os
+
+LANGUAGE_CODES = {
+    <span class="st">"Telugu"</span>: <span class="st">"te"</span>, <span class="st">"Hindi"</span>: <span class="st">"hi"</span>, <span class="st">"Tamil"</span>: <span class="st">"ta"</span>,
+    <span class="st">"Marathi"</span>: <span class="st">"mr"</span>, <span class="st">"Kannada"</span>: <span class="st">"kn"</span>, <span class="st">"Bengali"</span>: <span class="st">"bn"</span>
+}
+
+<span class="cm"># Agricultural terms that should NOT be translated</span>
+<span class="cm"># (farmers know brand names in English)</span>
+KEEP_IN_ENGLISH = [
+    <span class="st">"Actara 25WG"</span>, <span class="st">"Engeo Pleno"</span>, <span class="st">"Amistar Top"</span>,
+    <span class="st">"Karate Zeon"</span>, <span class="st">"Coragen 20 SC"</span>, <span class="st">"VAANI"</span>
+]
+
+translate_client = translate.Client()
+
+<span class="kw">def</span> <span class="fn">translate_to_language</span>(text: <span class="ty">str</span>, language: <span class="ty">str</span>) -> <span class="ty">str</span>:
+    <span class="kw">if</span> language == <span class="st">"English"</span>:
+        <span class="kw">return</span> text
+
+    lang_code = LANGUAGE_CODES.get(language, <span class="st">"hi"</span>)
+
+    <span class="cm"># Protect brand names with placeholders before translation</span>
+    protected = text
+    placeholders = {}
+    <span class="kw">for</span> i, term <span class="kw">in</span> enumerate(KEEP_IN_ENGLISH):
+        placeholder = <span class="st">f"BRAND{i}"</span>
+        <span class="kw">if</span> term <span class="kw">in</span> protected:
+            placeholders[placeholder] = term
+            protected = protected.replace(term, placeholder)
+
+    <span class="cm"># Translate</span>
+    result = translate_client.translate(protected, target_language=lang_code)
+    translated = result[<span class="st">"translatedText"</span>]
+
+    <span class="cm"># Restore brand names</span>
+    <span class="kw">for</span> placeholder, term <span class="kw">in</span> placeholders.items():
+        translated = translated.replace(placeholder, term)
+
+    <span class="kw">return</span> translated</pre></div>
+  </div>
+
+  <div class="sec-lbl">5.3 — Visit Router Service (TSP + Urgency)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/services/visit_router.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">from</span> ortools.constraint_solver <span class="kw">import</span> routing_enums_pb2
+<span class="kw">from</span> ortools.constraint_solver <span class="kw">import</span> pywrapcr <span class="kw">as</span> pywrapcp
+
+<span class="kw">def</span> <span class="fn">build_daily_plan</span>(rep_id: <span class="ty">int</span>, db) -> <span class="ty">dict</span>:
+    rep = get_rep(rep_id, db)
+
+    <span class="cm"># Collect all candidate stops from all 5 sources</span>
+    dealer_stops      = get_urgent_dealers(rep.territory_districts, db)
+    farmer_stops      = get_pulse_flagged_farmers(rep.territory_districts, db)
+    champion_stops    = get_champion_sync_needed(rep.territory_districts, db)
+    institutional_due = get_institutional_due(rep.territory_districts, db)
+
+    all_stops = dealer_stops + farmer_stops + champion_stops
+
+    <span class="cm"># Score each stop by urgency</span>
+    <span class="kw">for</span> stop <span class="kw">in</span> all_stops:
+        stop[<span class="st">"priority_score"</span>] = calculate_stop_priority(stop, db)
+
+    <span class="cm"># Limit to 5-6 stops (realistic day)</span>
+    top_stops = sorted(all_stops, key=<span class="kw">lambda</span> x: x[<span class="st">"priority_score"</span>], reverse=<span class="kw">True</span>)[:<span class="nm">5</span>]
+
+    <span class="cm"># Optimize route order using TSP (minimize travel distance)</span>
+    ordered_stops = optimize_route(top_stops, rep.base_location)
+
+    <span class="cm"># Add memory brief + emotional mode to each stop</span>
+    <span class="kw">for</span> stop <span class="kw">in</span> ordered_stops:
+        stop[<span class="st">"memory_brief"</span>] = get_stop_memory(stop, db)
+        stop[<span class="st">"emotional_mode"</span>] = get_district_emotional_mode(stop[<span class="st">"district_id"</span>], db)
+        stop[<span class="st">"talking_points"</span>] = generate_talking_points(stop, db)
+
+    <span class="kw">return</span> {
+        <span class="st">"rep_id"</span>: rep_id,
+        <span class="st">"date"</span>: datetime.today().strftime(<span class="st">"%Y-%m-%d"</span>),
+        <span class="st">"stops"</span>: ordered_stops,
+        <span class="st">"this_week"</span>: institutional_due,  <span class="cm"># Not today but flag this week</span>
+        <span class="st">"district_modes"</span>: get_rep_district_modes(rep.territory_districts, db)
+    }</pre></div>
+  </div>
+</div>
+
+<!-- ══ 06 FRONTEND ══ -->
+<div class="sec" id="sec-frontend">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--cyan)">Step 06</div>
+    <div class="sh-title">Frontend — React PWA (Rep App)</div>
+    <div class="sh-desc">The rep-facing Progressive Web App. Offline-first with SQLite, installs like a native app, works in zero-signal rural areas.</div>
+  </div>
+
+  <div class="sec-lbl">6.1 — Create React App with Vite</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="kw">cd</span> vaani-v3
+<span class="kw">npm create vite@latest</span> frontend -- --template react
+<span class="kw">cd</span> frontend
+<span class="kw">npm install</span>
+
+<span class="cm"># Install key packages</span>
+<span class="kw">npm install</span> @tanstack/react-query axios react-router-dom
+<span class="kw">npm install</span> sql.js             <span class="cm"># SQLite in the browser</span>
+<span class="kw">npm install</span> workbox-webpack-plugin  <span class="cm"># Service worker for offline</span>
+<span class="kw">npm install</span> tailwindcss @tailwindcss/vite
+
+<span class="cm"># Start development server</span>
+<span class="kw">npm run dev</span>  <span class="cm"># Opens on http://localhost:5173</span></pre></div>
+  </div>
+
+  <div class="sec-lbl">6.2 — PWA Manifest (Makes it Install Like a Native App)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">frontend/public/manifest.json</span><span class="cb-lang">json</span></div>
+    <div class="cb-body"><pre>{
+  <span class="st">"name"</span>: <span class="st">"VAANI Field"</span>,
+  <span class="st">"short_name"</span>: <span class="st">"VAANI"</span>,
+  <span class="st">"description"</span>: <span class="st">"Syngenta Field Operations"</span>,
+  <span class="st">"start_url"</span>: <span class="st">"/"</span>,
+  <span class="st">"display"</span>: <span class="st">"standalone"</span>,
+  <span class="st">"background_color"</span>: <span class="st">"#1a1208"</span>,
+  <span class="st">"theme_color"</span>: <span class="st">"#b8780a"</span>,
+  <span class="st">"icons"</span>: [
+    { <span class="st">"src"</span>: <span class="st">"/icon-192.png"</span>, <span class="st">"sizes"</span>: <span class="st">"192x192"</span>, <span class="st">"type"</span>: <span class="st">"image/png"</span> },
+    { <span class="st">"src"</span>: <span class="st">"/icon-512.png"</span>, <span class="st">"sizes"</span>: <span class="st">"512x512"</span>, <span class="st">"type"</span>: <span class="st">"image/png"</span> }
+  ]
+}</pre></div>
+  </div>
+
+  <div class="sec-lbl">6.3 — Offline SQLite Service (The Heart of PWA)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">frontend/src/db/offlineDb.js</span><span class="cb-lang">javascript</span></div>
+    <div class="cb-body"><pre><span class="kw">import</span> initSqlJs <span class="kw">from</span> <span class="st">'sql.js'</span>;
+
+<span class="kw">let</span> db = <span class="kw">null</span>;
+
+<span class="kw">export async function</span> <span class="fn">initDB</span>() {
+  <span class="kw">const</span> SQL = <span class="kw">await</span> initSqlJs({
+    locateFile: file => <span class="st">`/sql-wasm.wasm`</span>
+  });
+  db = <span class="kw">new</span> SQL.Database();
+
+  <span class="cm">// Create tables for offline storage</span>
+  db.run(<span class="st">`
+    CREATE TABLE IF NOT EXISTS daily_plan (
+      id INTEGER PRIMARY KEY,
+      data TEXT,           -- Full JSON plan
+      downloaded_at TEXT,
+      date TEXT
+    );
+    CREATE TABLE IF NOT EXISTS pending_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      stop_id INTEGER,
+      stop_type TEXT,
+      outcome TEXT,        -- JSON outcome data
+      logged_at TEXT,
+      synced INTEGER DEFAULT 0
+    );
+    CREATE TABLE IF NOT EXISTS farmer_memory_cache (
+      farmer_id INTEGER PRIMARY KEY,
+      memory_data TEXT,    -- JSON memory record
+      cached_at TEXT
+    );
+  `</span>);
+}
+
+<span class="kw">export function</span> <span class="fn">saveDailyPlan</span>(planData) {
+  <span class="cm">// Store today's plan locally</span>
+  db.run(<span class="st">`INSERT OR REPLACE INTO daily_plan VALUES (1, ?, ?, ?)`</span>,
+    [JSON.stringify(planData), <span class="kw">new</span> Date().toISOString(), planData.date]);
+}
+
+<span class="kw">export function</span> <span class="fn">getDailyPlan</span>() {
+  <span class="kw">const</span> result = db.exec(<span class="st">`SELECT data FROM daily_plan WHERE id = 1`</span>);
+  <span class="kw">if</span> (!result[<span class="nm">0</span>]) <span class="kw">return null</span>;
+  <span class="kw">return</span> JSON.parse(result[<span class="nm">0</span>].values[<span class="nm">0</span>][<span class="nm">0</span>]);
+}
+
+<span class="kw">export function</span> <span class="fn">logVisitOffline</span>(stopId, stopType, outcome) {
+  <span class="cm">// Queue outcome log — will sync when online</span>
+  db.run(<span class="st">`INSERT INTO pending_logs (stop_id, stop_type, outcome, logged_at) VALUES (?, ?, ?, ?)`</span>,
+    [stopId, stopType, JSON.stringify(outcome), <span class="kw">new</span> Date().toISOString()]);
+}
+
+<span class="kw">export function</span> <span class="fn">getPendingLogs</span>() {
+  <span class="kw">const</span> result = db.exec(<span class="st">`SELECT * FROM pending_logs WHERE synced = 0`</span>);
+  <span class="kw">return</span> result[<span class="nm">0</span>]?.values || [];
+}
+
+<span class="kw">export function</span> <span class="fn">markLogsSynced</span>() {
+  db.run(<span class="st">`UPDATE pending_logs SET synced = 1 WHERE synced = 0`</span>);
+}</pre></div>
+  </div>
+
+  <div class="sec-lbl">6.4 — Morning Sync (Downloads Everything Before Rep Leaves Home)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">frontend/src/services/sync.js</span><span class="cb-lang">javascript</span></div>
+    <div class="cb-body"><pre><span class="kw">import</span> axios <span class="kw">from</span> <span class="st">'axios'</span>;
+<span class="kw">import</span> { saveDailyPlan, getPendingLogs, markLogsSynced } <span class="kw">from</span> <span class="st">'../db/offlineDb'</span>;
+
+<span class="kw">const</span> API = process.env.VITE_API_URL;
+
+<span class="kw">export async function</span> <span class="fn">morningSync</span>(repId) {
+  <span class="cm">// Step 1: Upload any queued outcome logs from yesterday</span>
+  <span class="kw">const</span> pending = getPendingLogs();
+  <span class="kw">if</span> (pending.length > <span class="nm">0</span>) {
+    <span class="kw">await</span> axios.post(<span class="st">`${API}/api/reps/sync-logs`</span>, { logs: pending });
+    markLogsSynced();
+    console.log(<span class="st">`✅ Synced ${pending.length} pending logs`</span>);
+  }
+
+  <span class="cm">// Step 2: Download today's daily plan</span>
+  <span class="kw">const</span> plan = <span class="kw">await</span> axios.get(<span class="st">`${API}/api/reps/offline-package/${repId}`</span>);
+  saveDailyPlan(plan.data);
+  console.log(<span class="st">`✅ Downloaded ${plan.data.stops.length} stops for today`</span>);
+
+  <span class="kw">return</span> plan.data;
+}
+
+<span class="cm">// Auto-sync when connection returns</span>
+window.addEventListener(<span class="st">'online'</span>, () => {
+  <span class="kw">const</span> repId = localStorage.getItem(<span class="st">'rep_id'</span>);
+  <span class="kw">if</span> (repId) morningSync(repId);
+});</pre></div>
+  </div>
+</div>
+
+<!-- ══ 07 MESSAGING ══ -->
+<div class="sec" id="sec-messaging">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--red)">Step 07</div>
+    <div class="sh-title">Messaging Integration</div>
+    <div class="sh-desc">Twilio for WhatsApp, Exotel for IVR calls, MSG91 for SMS. How messages actually reach farmers' phones.</div>
+  </div>
+
+  <div class="sec-lbl">7.1 — WhatsApp via Twilio</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/services/messaging_service.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">from</span> twilio.rest <span class="kw">import</span> Client
+<span class="kw">import</span> os
+
+twilio_client = Client(
+    os.getenv(<span class="st">"TWILIO_ACCOUNT_SID"</span>),
+    os.getenv(<span class="st">"TWILIO_AUTH_TOKEN"</span>)
+)
+
+<span class="kw">def</span> <span class="fn">send_whatsapp</span>(phone_number: <span class="ty">str</span>, message: <span class="ty">str</span>):
+    <span class="st">"""
+    Send WhatsApp message to farmer or dealer.
+    phone_number: Indian number like +919848XXXXXX
+    """</span>
+    <span class="kw">try</span>:
+        msg = twilio_client.messages.create(
+            from_=os.getenv(<span class="st">"TWILIO_WHATSAPP_NUMBER"</span>),
+            to=<span class="st">f"whatsapp:{phone_number}"</span>,
+            body=message
+        )
+        <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"sent"</span>, <span class="st">"sid"</span>: msg.sid}
+    <span class="kw">except</span> Exception <span class="kw">as</span> e:
+        <span class="cm"># Log failure and fall back to SMS</span>
+        log_message_failure(phone_number, str(e))
+        send_sms_fallback(phone_number, message[:160])
+        <span class="kw">return</span> {<span class="st">"status"</span>: <span class="st">"fallback_sms"</span>}
+
+
+<span class="kw">def</span> <span class="fn">send_bulk_whatsapp</span>(recipients: <span class="ty">list</span>, message_template: <span class="ty">str</span>, context: <span class="ty">dict</span>):
+    <span class="st">"""
+    Send to multiple farmers — personalized per farmer.
+    Uses Celery for async processing (don't block the API).
+    """</span>
+    <span class="kw">from</span> tasks <span class="kw">import</span> send_whatsapp_task
+    <span class="kw">for</span> recipient <span class="kw">in</span> recipients:
+        <span class="cm"># Queue as async Celery task</span>
+        send_whatsapp_task.delay(
+            phone=recipient[<span class="st">"phone"</span>],
+            message=personalize_message(message_template, recipient, context)
+        )</pre></div>
+  </div>
+
+  <div class="sec-lbl">7.2 — IVR Calls via Exotel</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/services/messaging_service.py (continued)</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">import</span> requests
+
+<span class="kw">def</span> <span class="fn">make_ivr_call</span>(phone_number: <span class="ty">str</span>, script: <span class="ty">str</span>, language: <span class="ty">str</span>):
+    <span class="st">"""
+    Makes outbound IVR call to farmer's phone.
+    Works on any phone — no smartphone / WhatsApp needed.
+    Farmer hears voice message and presses 1/2/3.
+    Keypress captured and sent to /webhooks/exotel-response
+    """</span>
+    <span class="cm"># Step 1: Convert text to speech audio file</span>
+    audio_url = text_to_speech(script, language)
+
+    <span class="cm"># Step 2: Make call via Exotel</span>
+    subdomain = os.getenv(<span class="st">"EXOTEL_SUBDOMAIN"</span>)
+    url = <span class="st">f"https://{subdomain}.exotel.com/v1/Accounts/{subdomain}/Calls/connect"</span>
+
+    response = requests.post(url,
+        auth=(os.getenv(<span class="st">"EXOTEL_API_KEY"</span>), os.getenv(<span class="st">"EXOTEL_API_TOKEN"</span>)),
+        data={
+            <span class="st">"From"</span>: phone_number,
+            <span class="st">"To"</span>: <span class="st">"EXOTEL_CALLER_ID"</span>,
+            <span class="st">"Url"</span>: audio_url,
+            <span class="st">"StatusCallback"</span>: <span class="st">"https://yourapp.com/webhooks/exotel-response"</span>
+        }
+    )
+    <span class="kw">return</span> response.json()
+
+
+<span class="kw">def</span> <span class="fn">text_to_speech</span>(text: <span class="ty">str</span>, language: <span class="ty">str</span>) -> <span class="ty">str</span>:
+    <span class="st">"""Convert text to audio file, return URL."""</span>
+    <span class="kw">from</span> google.cloud <span class="kw">import</span> texttospeech
+
+    LANGUAGE_VOICES = {
+        <span class="st">"Telugu"</span>:  (<span class="st">"te-IN"</span>, <span class="st">"te-IN-Standard-A"</span>),
+        <span class="st">"Hindi"</span>:   (<span class="st">"hi-IN"</span>, <span class="st">"hi-IN-Standard-A"</span>),
+        <span class="st">"Tamil"</span>:   (<span class="st">"ta-IN"</span>, <span class="st">"ta-IN-Standard-A"</span>),
+        <span class="st">"Marathi"</span>: (<span class="st">"mr-IN"</span>, <span class="st">"mr-IN-Standard-A"</span>),
+    }
+    lang_code, voice_name = LANGUAGE_VOICES.get(language, (<span class="st">"hi-IN"</span>, <span class="st">"hi-IN-Standard-A"</span>))
+
+    tts_client = texttospeech.TextToSpeechClient()
+    synthesis_input = texttospeech.SynthesisInput(text=text)
+    voice = texttospeech.VoiceSelectionParams(language_code=lang_code, name=voice_name)
+    audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+
+    response = tts_client.synthesize_speech(
+        input=synthesis_input, voice=voice, audio_config=audio_config
+    )
+    <span class="cm"># Save to S3/GCS and return URL</span>
+    audio_url = save_audio_to_storage(response.audio_content)
+    <span class="kw">return</span> audio_url</pre></div>
+  </div>
+
+  <div class="sec-lbl">7.3 — Webhook: Capture Farmer IVR Response</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">backend/api/webhooks.py</span><span class="cb-lang">python</span></div>
+    <div class="cb-body"><pre><span class="kw">@router</span>.post(<span class="st">"/exotel-response"</span>)
+<span class="kw">async def</span> <span class="fn">exotel_ivr_response</span>(
+    From: <span class="ty">str</span> = Form(...),     <span class="cm"># Farmer's phone number</span>
+    Digits: <span class="ty">str</span> = Form(<span class="kw">None</span>), <span class="cm"># Key pressed: 1, 2, or 3</span>
+    db=Depends(get_db)
+):
+    <span class="st">"""
+    Exotel calls this when farmer presses a key during IVR call.
+    1 = Healthy, 2 = Some problem, 3 = Serious problem
+    """</span>
+    <span class="kw">if</span> Digits:
+        <span class="cm"># Same logic as WhatsApp pulse response</span>
+        <span class="kw">await</span> receive_pulse_response(
+            farmer_phone=From,
+            response=int(Digits),
+            db=db
+        )
+    <span class="kw">return</span> <span class="st">"<?xml version='1.0'?><Response><Hangup/></Response>"</span>
+
+
+<span class="kw">@router</span>.post(<span class="st">"/twilio-whatsapp"</span>)
+<span class="kw">async def</span> <span class="fn">twilio_whatsapp_response</span>(
+    From: <span class="ty">str</span> = Form(...),   <span class="cm"># whatsapp:+91XXXXXXXXXX</span>
+    Body: <span class="ty">str</span> = Form(...),   <span class="cm"># Farmer's reply text: "1", "2", "3"</span>
+    db=Depends(get_db)
+):
+    <span class="st">"""
+    Twilio calls this when farmer replies to WhatsApp message.
+    Parse the reply and route to pulse response handler.
+    """</span>
+    phone = From.replace(<span class="st">"whatsapp:"</span>, <span class="st">""</span>)
+    <span class="cm"># Handle text replies "1"/"2"/"3" or word replies "good"/"problem"</span>
+    response_num = parse_farmer_reply(Body)
+    <span class="kw">if</span> response_num:
+        <span class="kw">await</span> receive_pulse_response(farmer_phone=phone, response=response_num, db=db)</pre></div>
+  </div>
+</div>
+
+<!-- ══ 08 DEPLOYMENT ══ -->
+<div class="sec" id="sec-deploy">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--green)">Step 08</div>
+    <div class="sh-title">Deployment</div>
+    <div class="sh-desc">Docker for containerization. Railway for dev/staging. AWS for production. CI/CD pipeline with GitHub Actions.</div>
+  </div>
+
+  <div class="sec-lbl">8.1 — Docker Setup</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">docker/Dockerfile.backend</span><span class="cb-lang">dockerfile</span></div>
+    <div class="cb-body"><pre><span class="kw">FROM</span> python:3.11-slim
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="cm"># Install system dependencies</span>
+<span class="kw">RUN</span> apt-get update && apt-get install -y \
+    postgresql-client libpq-dev gcc && \
+    rm -rf /var/lib/apt/lists/*
+
+<span class="cm"># Install Python dependencies</span>
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --no-cache-dir -r requirements.txt
+
+<span class="kw">COPY</span> . .
+
+<span class="cm"># Run with uvicorn</span>
+<span class="kw">CMD</span> ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">docker/docker-compose.yml</span><span class="cb-lang">yaml</span></div>
+    <div class="cb-body"><pre><span class="kw">version</span>: <span class="st">'3.9'</span>
+
+<span class="kw">services</span>:
+  <span class="kw">backend</span>:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.backend
+    ports: [<span class="st">"8000:8000"</span>]
+    env_file: ../backend/.env
+    depends_on: [postgres, redis]
+    volumes: [<span class="st">"../backend:/app"</span>]
+
+  <span class="kw">postgres</span>:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: vaani_db
+      POSTGRES_USER: vaani_user
+      POSTGRES_PASSWORD: your-password
+    ports: [<span class="st">"5432:5432"</span>]
+    volumes: [<span class="st">"postgres_data:/var/lib/postgresql/data"</span>]
+
+  <span class="kw">redis</span>:
+    image: redis:7-alpine
+    ports: [<span class="st">"6379:6379"</span>]
+
+  <span class="kw">celery_worker</span>:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile.backend
+    command: celery -A tasks worker --loglevel=info
+    env_file: ../backend/.env
+    depends_on: [redis, postgres]
+
+  <span class="kw">airflow</span>:
+    image: apache/airflow:2.8.0
+    ports: [<span class="st">"8080:8080"</span>]
+    env_file: ../backend/.env
+    volumes: [<span class="st">"../backend/pipeline:/opt/airflow/dags"</span>]
+
+<span class="kw">volumes</span>:
+  postgres_data:</pre></div>
+  </div>
+
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="cm"># Start entire stack with one command</span>
+<span class="kw">docker-compose</span> -f docker/docker-compose.yml up --build
+
+<span class="cm"># Backend API: http://localhost:8000</span>
+<span class="cm"># Airflow: http://localhost:8080</span>
+<span class="cm"># PostgreSQL: localhost:5432</span>
+<span class="cm"># Redis: localhost:6379</span></pre></div>
+  </div>
+
+  <div class="sec-lbl">8.2 — Deploy to Railway (Dev/Staging — Free)</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">terminal</span><span class="cb-lang">bash</span></div>
+    <div class="cb-body"><pre><span class="cm"># Install Railway CLI</span>
+<span class="kw">npm install -g</span> @railway/cli
+
+<span class="cm"># Login</span>
+<span class="kw">railway login</span>
+
+<span class="cm"># Initialize project</span>
+<span class="kw">railway init</span>
+
+<span class="cm"># Add PostgreSQL database</span>
+<span class="kw">railway add</span> --plugin postgresql
+
+<span class="cm"># Add Redis</span>
+<span class="kw">railway add</span> --plugin redis
+
+<span class="cm"># Set environment variables</span>
+<span class="kw">railway variables set</span> ANTHROPIC_API_KEY=sk-ant-your-key
+<span class="kw">railway variables set</span> TWILIO_ACCOUNT_SID=your-sid
+<span class="cm"># ... set all env vars</span>
+
+<span class="cm"># Deploy</span>
+<span class="kw">railway up</span>
+
+<span class="cm"># Get your live URL</span>
+<span class="kw">railway open</span>
+<span class="cm"># → https://vaani-v3-production.up.railway.app</span></pre></div>
+  </div>
+
+  <div class="sec-lbl">8.3 — GitHub Actions CI/CD Pipeline</div>
+  <div class="code-block">
+    <div class="cb-head"><span class="cb-filename">.github/workflows/deploy.yml</span><span class="cb-lang">yaml</span></div>
+    <div class="cb-body"><pre><span class="kw">name</span>: Deploy VAANI V3
+
+<span class="kw">on</span>:
+  push:
+    branches: [main]
+
+<span class="kw">jobs</span>:
+  <span class="kw">deploy</span>:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: <span class="st">Set up Python</span>
+        uses: actions/setup-python@v4
+        with: { python-version: '3.11' }
+
+      - name: <span class="st">Install dependencies</span>
+        run: |
+          cd backend
+          pip install -r requirements.txt
+
+      - name: <span class="st">Run tests</span>
+        run: cd backend && python -m pytest
+
+      - name: <span class="st">Deploy to Railway</span>
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+          service: backend</pre></div>
+  </div>
+</div>
+
+<!-- ══ 09 CHECKLIST ══ -->
+<div class="sec" id="sec-checklist">
+  <div class="sh">
+    <div class="sh-eye" style="color:var(--gold)">Step 09</div>
+    <div class="sh-title">Complete Build Checklist</div>
+    <div class="sh-desc">Every single task from setup to production. Click to mark done.</div>
+  </div>
+
+  <div class="prog">
+    <div class="prog-lbl">Build Progress</div>
+    <div class="prog-bar"><div class="prog-fill" id="pfill" style="width:0%"></div></div>
+    <div class="prog-pct" id="ppct">0%</div>
+  </div>
+
+  <div class="sec-lbl">Phase 1 — Setup (Day 1)</div>
+  <div class="cl" id="cl">
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-b">SETUP</div><div class="ci-content"><div class="ci-text">Create GitHub repo — vaani-v3, private</div><div class="ci-hint">github.com → New Repository → Private → Initialize with README</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-b">SETUP</div><div class="ci-content"><div class="ci-text">Create full folder structure exactly as shown in repo tab</div><div class="ci-hint">backend/ frontend/ dashboard/ ml/ docker/ directories</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-b">SETUP</div><div class="ci-content"><div class="ci-text">Python 3.11 virtual environment created + all packages installed</div><div class="ci-hint">pip install fastapi uvicorn sqlalchemy psycopg2-binary alembic redis celery langchain anthropic...</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-b">SETUP</div><div class="ci-content"><div class="ci-text">.env file created with all API key placeholders</div><div class="ci-hint">DATABASE_URL, ANTHROPIC_API_KEY, TWILIO keys, EXOTEL keys, MSG91 key, OPENWEATHERMAP key</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-b">SETUP</div><div class="ci-content"><div class="ci-text">PostgreSQL installed and vaani_db database created</div><div class="ci-hint">brew install postgresql / sudo apt install postgresql → createdb vaani_db</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-b">SETUP</div><div class="ci-content"><div class="ci-text">Redis installed and running (redis-cli ping returns PONG)</div><div class="ci-hint">brew install redis / sudo apt install redis-server → brew services start redis</div></div></div>
+
+    <div class="sec-lbl" style="margin-top:16px;">Phase 2 — Backend Core (Days 2–4)</div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-gold">BACKEND</div><div class="ci-content"><div class="ci-text">FastAPI main.py created — server starts on localhost:8000</div><div class="ci-hint">uvicorn main:app --reload → visit localhost:8000/docs</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-gold">BACKEND</div><div class="ci-content"><div class="ci-text">All database models created (Farmer, FarmerMemory, District, Visit, Dealer, Champion)</div><div class="ci-hint">backend/models/ — each model is a SQLAlchemy class</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-gold">BACKEND</div><div class="ci-content"><div class="ci-text">Alembic migration run — all tables created in PostgreSQL</div><div class="ci-hint">alembic revision --autogenerate -m "initial" → alembic upgrade head</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-gold">BACKEND</div><div class="ci-content"><div class="ci-text">Territory score calculation service working (returns 0-100 + emotional mode)</div><div class="ci-hint">backend/services/territory_score.py — test with dummy data first</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-gold">BACKEND</div><div class="ci-content"><div class="ci-text">Content generator service working — calls Claude API, returns message</div><div class="ci-hint">backend/services/content_generator.py — test with Anthropic API key</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-gold">BACKEND</div><div class="ci-content"><div class="ci-text">Visit router service working — builds daily plan from DB data</div><div class="ci-hint">backend/services/visit_router.py — returns ordered stops with memory briefs</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-gold">BACKEND</div><div class="ci-content"><div class="ci-text">All API endpoints created and tested via FastAPI docs (/docs)</div><div class="ci-hint">GET /api/reps/daily-plan/{id}, POST /api/reps/log-visit, POST /api/content/generate, etc.</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-gold">BACKEND</div><div class="ci-content"><div class="ci-text">JWT authentication working — reps can log in and get a token</div><div class="ci-hint">POST /auth/login → returns JWT token → used in all subsequent requests</div></div></div>
+
+    <div class="sec-lbl" style="margin-top:16px;">Phase 3 — Data Pipeline (Days 3–5)</div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-c">PIPELINE</div><div class="ci-content"><div class="ci-text">Airflow installed and running on localhost:8080</div><div class="ci-hint">airflow db init → airflow webserver + airflow scheduler</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-c">PIPELINE</div><div class="ci-content"><div class="ci-text">Weather DAG created — fetches data for all 20 districts every 6 hours</div><div class="ci-hint">backend/pipeline/weather_dag.py — test by triggering manually first</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-c">PIPELINE</div><div class="ci-content"><div class="ci-text">Pest bulletin scraper working — parses ICAR bulletins daily</div><div class="ci-hint">backend/pipeline/pest_bulletin_dag.py — scrape + parse PDF/HTML bulletins</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-c">PIPELINE</div><div class="ci-content"><div class="ci-text">Daily plan generation DAG working — runs 6 AM, builds all rep plans</div><div class="ci-hint">backend/pipeline/daily_plan_dag.py — verify plans appear in Redis</div></div></div>
+
+    <div class="sec-lbl" style="margin-top:16px;">Phase 4 — Frontend PWA (Days 5–8)</div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-p">FRONTEND</div><div class="ci-content"><div class="ci-text">React + Vite project created, runs on localhost:5173</div><div class="ci-hint">npm create vite@latest frontend -- --template react</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-p">FRONTEND</div><div class="ci-content"><div class="ci-text">SQLite offline layer working — saves plan, queues logs</div><div class="ci-hint">frontend/src/db/offlineDb.js — test by saving/reading data</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-p">FRONTEND</div><div class="ci-content"><div class="ci-text">Morning sync working — downloads plan, uploads pending logs</div><div class="ci-hint">frontend/src/services/sync.js — test with real backend API</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-p">FRONTEND</div><div class="ci-content"><div class="ci-text">Daily plan UI built — shows all 5 stop types with expand/collapse</div><div class="ci-hint">Matches the unified plan in the prototype exactly</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-p">FRONTEND</div><div class="ci-content"><div class="ci-text">Outcome logger working — 3-tap logging per stop type</div><div class="ci-hint">Dealer / Farmer / Champion — different fields per type</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-p">FRONTEND</div><div class="ci-content"><div class="ci-text">PWA manifest + service worker — app installs on Android homescreen</div><div class="ci-hint">manifest.json + workbox service worker — test via Chrome DevTools → Application</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-p">FRONTEND</div><div class="ci-content"><div class="ci-text">Works completely offline — plan accessible with no internet</div><div class="ci-hint">Test: download plan → switch to airplane mode → all data still shows</div></div></div>
+
+    <div class="sec-lbl" style="margin-top:16px;">Phase 5 — Messaging (Days 6–8)</div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-r">MESSAGING</div><div class="ci-content"><div class="ci-text">Twilio account created + WhatsApp sandbox activated</div><div class="ci-hint">twilio.com → Console → Messaging → WhatsApp Sandbox → join the sandbox with test phone</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-r">MESSAGING</div><div class="ci-content"><div class="ci-text">First WhatsApp message sent successfully to test number</div><div class="ci-hint">send_whatsapp("+91XXXXXXXXXX", "Hello from VAANI") — verify it arrives</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-r">MESSAGING</div><div class="ci-content"><div class="ci-text">Twilio webhook set up — farmer reply captured by /webhooks/twilio-whatsapp</div><div class="ci-hint">Use ngrok to expose localhost:8000 to internet for webhook testing</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-r">MESSAGING</div><div class="ci-content"><div class="ci-text">Exotel account created + first test IVR call made</div><div class="ci-hint">exotel.com → sign up → create app → test outbound call with TTS script</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-r">MESSAGING</div><div class="ci-content"><div class="ci-text">IVR keypress captured — farmer pressing 1/2/3 updates pulse score</div><div class="ci-hint">/webhooks/exotel-response receives Digits parameter, routes to pulse handler</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-r">MESSAGING</div><div class="ci-content"><div class="ci-text">Translation working — English content correctly translated to Telugu and Hindi</div><div class="ci-hint">translate_to_language("Hello farmer", "Telugu") — verify output quality</div></div></div>
+
+    <div class="sec-lbl" style="margin-top:16px;">Phase 6 — Deployment (Days 9–10)</div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-g">DEPLOY</div><div class="ci-content"><div class="ci-text">Docker Compose running entire stack locally with one command</div><div class="ci-hint">docker-compose up --build → all services starting correctly</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-g">DEPLOY</div><div class="ci-content"><div class="ci-text">Backend deployed to Railway — live URL accessible</div><div class="ci-hint">railway up → get live URL → test /docs endpoint from browser</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-g">DEPLOY</div><div class="ci-content"><div class="ci-text">Frontend PWA deployed — installs on Android phone</div><div class="ci-hint">npm run build → deploy dist/ to Vercel or Railway static → test install on phone</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-g">DEPLOY</div><div class="ci-content"><div class="ci-text">GitHub Actions CI/CD — every push to main auto-deploys</div><div class="ci-hint">.github/workflows/deploy.yml → set RAILWAY_TOKEN secret in GitHub repo settings</div></div></div>
+    <div class="ci" onclick="tc(this)"><div class="ci-box">✓</div><div class="ci-p tag tag-g">DEPLOY</div><div class="ci-content"><div class="ci-text">End-to-end test: rep downloads plan → visits farmer → logs outcome → memory updated</div><div class="ci-hint">Full flow test with real phone numbers on staging environment</div></div></div>
+  </div>
+</div>
+
+</div><!-- end page -->
+
+<script>
+function show(id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nt').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function tc(el){
+  el.classList.toggle('done');
+  const all=document.querySelectorAll('#cl .ci').length;
+  const done=document.querySelectorAll('#cl .ci.done').length;
+  const pct=Math.round((done/all)*100);
+  document.getElementById('pfill').style.width=pct+'%';
+  document.getElementById('ppct').textContent=pct+'%';
+}
+</script>
+</body>
+</html>

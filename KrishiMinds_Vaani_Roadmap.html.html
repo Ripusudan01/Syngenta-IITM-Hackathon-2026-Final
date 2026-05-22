@@ -1,0 +1,2157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VAANI V3 — Rural Trust Infrastructure</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg:#f6f1e9; --bg2:#ede7dc; --bg3:#e3dcd0; --bg4:#d8d0c0;
+  --ink:#1a1208; --ink2:#3a2a18; --muted:#8a7860; --border:#cfc4b0; --border2:#bfb09a;
+  --gold:#b8780a; --gold-l:#fdf3d8; --gold-d:#7a5000;
+  --green:#2a7040; --green-l:#d8f0e0; --green-d:#164028;
+  --red:#b83020; --red-l:#fde8e4; --red-d:#701808;
+  --blue:#1a5888; --blue-l:#d8ecf8; --blue-d:#0d3050;
+  --amber:#c06810; --amber-l:#fde8c8; --amber-d:#784008;
+  --teal:#207068; --teal-l:#d0f0ec; --teal-d:#104038;
+  --rose:#a03060; --rose-l:#fde0ea; --rose-d:#601838;
+  --panic-bg:#fff0ee; --stable-bg:#edf8f0; --recover-bg:#fff8e8; --confident-bg:#eaf0ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--ink);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:224px;background:var(--ink);display:flex;flex-direction:column;z-index:100;}
+.sb-logo{padding:26px 22px 18px;border-bottom:1px solid #2a2010;}
+.sb-logo-main{font-family:'Playfair Display',serif;font-size:30px;font-weight:900;color:var(--gold);font-style:italic;letter-spacing:-0.01em;line-height:1;}
+.sb-logo-v{font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a4a30;background:#251e10;border:1px solid #3a2e18;padding:2px 7px;letter-spacing:0.1em;margin-top:4px;display:inline-block;}
+.sb-logo-sub{font-family:'JetBrains Mono',monospace;font-size:7px;color:#4a3a20;letter-spacing:0.12em;text-transform:uppercase;margin-top:6px;line-height:1.7;}
+.sb-sec{padding:14px 14px 6px;}
+.sb-lbl{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:0.2em;text-transform:uppercase;color:#4a3a20;padding:0 8px 8px;font-weight:700;}
+.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;cursor:pointer;border-radius:3px;transition:all 0.15s;color:#7a6a50;font-size:12px;font-weight:500;margin-bottom:1px;user-select:none;border-left:2px solid transparent;}
+.ni:hover{background:#2a2010;color:#c8b890;}
+.ni.active{background:var(--gold);color:var(--ink);border-left-color:transparent;}
+.ni-icon{font-size:13px;flex-shrink:0;}
+.ni-badge{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:7px;padding:2px 5px;background:var(--red);color:white;letter-spacing:0.06em;border-radius:1px;}
+.ni-badge-g{background:var(--gold-d);color:var(--gold-l);}
+.ni-badge-t{background:var(--teal-d);color:var(--teal-l);}
+.sb-bottom{margin-top:auto;padding:14px;border-top:1px solid #2a2010;}
+.rep-card{background:#221c10;padding:12px;border-radius:2px;}
+.rep-name{font-size:12px;font-weight:600;color:#c8b890;margin-bottom:2px;}
+.rep-ter{font-family:'JetBrains Mono',monospace;font-size:8px;color:#5a4a30;letter-spacing:0.06em;line-height:1.6;}
+
+/* MAIN */
+.main{margin-left:224px;min-height:100vh;position:relative;z-index:1;}
+
+/* TOPBAR */
+.topbar{background:var(--bg);border-bottom:1px solid var(--border);padding:0 30px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;letter-spacing:-0.01em;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.pill{font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 9px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;border-radius:1px;}
+.pill-r{background:var(--red-l);color:var(--red-d);border:1px solid #f0c0b8;}
+.pill-g{background:var(--gold-l);color:var(--gold-d);border:1px solid #e8d090;}
+.pill-gn{background:var(--green-l);color:var(--green-d);border:1px solid #a8d8b8;}
+.pill-t{background:var(--teal-l);color:var(--teal-d);border:1px solid #90d8d0;}
+.pill-b{background:var(--blue-l);color:var(--blue-d);border:1px solid #a8d0e8;}
+.pill-a{background:var(--amber-l);color:var(--amber-d);border:1px solid #e8c090;}
+.pill-rs{background:var(--rose-l);color:var(--rose-d);border:1px solid #f0b0c8;}
+.pill-rs{background:var(--rose-l);color:var(--rose-d);border:1px solid #f0b0c8;}
+.tb-date{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);}
+
+/* SECTIONS */
+.section{display:none;padding:26px 30px 60px;}
+.section.active{display:block;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* PG HEAD */
+.pg-head{margin-bottom:20px;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.pg-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;letter-spacing:-0.01em;line-height:1.1;}
+.pg-sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.7;}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+
+/* CARDS */
+.card{background:white;border:1px solid var(--border);padding:18px;position:relative;overflow:hidden;transition:transform 0.15s,border-color 0.15s;}
+.card:hover{transform:translateY(-1px);border-color:var(--border2);}
+.card-stripe{position:absolute;top:0;left:0;width:100%;height:3px;}
+.card-eye{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;margin-bottom:8px;}
+.card-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;margin-bottom:8px;line-height:1.3;}
+.card-body{font-size:11px;color:#6a5a48;line-height:1.85;}
+.cg .card-stripe{background:var(--green);} .cg .card-eye{color:var(--green);}
+.cr .card-stripe{background:var(--red);}   .cr .card-eye{color:var(--red);}
+.cb .card-stripe{background:var(--blue);}  .cb .card-eye{color:var(--blue);}
+.co .card-stripe{background:var(--gold);}  .co .card-eye{color:var(--gold);}
+.ct .card-stripe{background:var(--teal);}  .ct .card-eye{color:var(--teal);}
+.ca .card-stripe{background:var(--amber);} .ca .card-eye{color:var(--amber);}
+.crs .card-stripe{background:var(--rose);} .crs .card-eye{color:var(--rose);}
+
+/* STAT STRIP */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.stat-box{background:white;border:1px solid var(--border);padding:14px 16px;position:relative;overflow:hidden;}
+.stat-box::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.sb-panic::before{background:var(--red);}
+.sb-high::before{background:var(--amber);}
+.sb-stable::before{background:var(--green);}
+.sb-confident::before{background:var(--blue);}
+.sb-recover::before{background:var(--teal);}
+.stat-num{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;line-height:1;margin-bottom:3px;}
+.sb-panic .stat-num{color:var(--red);}
+.sb-high .stat-num{color:var(--amber);}
+.sb-stable .stat-num{color:var(--green);}
+.sb-confident .stat-num{color:var(--blue);}
+.sb-recover .stat-num{color:var(--teal);}
+.stat-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);}
+
+/* EMOTION BADGE */
+.em-badge{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 8px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;border-radius:1px;}
+.em-panic{background:var(--red-l);color:var(--red-d);border:1px solid #f0c0b8;}
+.em-stable{background:var(--green-l);color:var(--green-d);border:1px solid #a0d8b0;}
+.em-recover{background:var(--amber-l);color:var(--amber-d);border:1px solid #e8c080;}
+.em-confident{background:var(--blue-l);color:var(--blue-d);border:1px solid #a0c8e8;}
+
+/* URGENCY */
+.urg{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;border-radius:1px;}
+.urg.CRITICAL{background:var(--red-l);color:var(--red-d);border:1px solid #f0b8b0;}
+.urg.HIGH{background:var(--amber-l);color:var(--amber-d);border:1px solid #e8c080;}
+.urg.MEDIUM{background:var(--gold-l);color:var(--gold-d);border:1px solid #e0c870;}
+.urg.LOW{background:var(--green-l);color:var(--green-d);border:1px solid #a0d8b0;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:11px;}
+.tbl th{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);padding:9px 12px;text-align:left;background:var(--bg2);border:1px solid var(--border);font-weight:700;}
+.tbl td{padding:9px 12px;border:1px solid var(--bg3);background:white;vertical-align:middle;color:var(--ink2);line-height:1.5;}
+.tbl tr:hover td{background:var(--bg2);}
+
+/* SCORE BAR */
+.sbar-wrap{display:flex;align-items:center;gap:6px;}
+.sbar{height:5px;background:var(--bg3);flex:1;max-width:70px;border-radius:1px;overflow:hidden;}
+.sbar-fill{height:100%;border-radius:1px;}
+.sval{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;min-width:24px;}
+
+/* ANOMALY BANNER */
+.anomaly{background:var(--red-l);border:1px solid #f0c0b8;border-left:4px solid var(--red);padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:12px;}
+.anomaly-icon{font-size:18px;flex-shrink:0;}
+.anomaly-text{font-size:12px;color:var(--red-d);line-height:1.7;}
+.anomaly-text strong{font-weight:700;}
+
+/* PANIC MODE BANNER */
+.panic-banner{background:var(--panic-bg);border:1px solid #f0c0b8;border-left:4px solid var(--red);padding:14px 18px;margin-bottom:18px;}
+.panic-banner .panic-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--red-d);margin-bottom:6px;}
+.panic-banner .panic-body{font-size:12px;color:#7a3020;line-height:1.7;}
+
+/* CONTENT GEN */
+.gen-wrap{display:grid;grid-template-columns:320px 1fr;gap:14px;align-items:start;}
+.gen-form{background:white;border:1px solid var(--border);}
+.gen-form-head{padding:14px 16px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;}
+.gen-form-body{padding:16px;}
+.fg{margin-bottom:13px;}
+.fl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:700;display:block;margin-bottom:5px;}
+.fs,.fi{width:100%;padding:8px 10px;background:var(--bg);border:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:12px;color:var(--ink);outline:none;transition:border-color 0.15s;appearance:none;}
+.fs:focus,.fi:focus{border-color:var(--gold);}
+.mode-toggle{display:flex;gap:0;margin-top:4px;}
+.mode-btn{flex:1;padding:7px 4px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.06em;text-transform:uppercase;font-weight:700;border:1px solid var(--border);background:var(--bg);cursor:pointer;transition:all 0.15s;text-align:center;color:var(--muted);}
+.mode-btn:not(:first-child){border-left:none;}
+.mode-btn.active-panic{background:var(--red-l);color:var(--red-d);border-color:#f0b8b0;}
+.mode-btn.active-stable{background:var(--green-l);color:var(--green-d);border-color:#a0d8b0;}
+.mode-btn.active-recover{background:var(--amber-l);color:var(--amber-d);border-color:#e8c080;}
+.mode-btn.active-confident{background:var(--blue-l);color:var(--blue-d);border-color:#a0c8e8;}
+.gen-btn{width:100%;padding:11px;background:var(--ink);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;border:none;cursor:pointer;transition:all 0.2s;margin-top:4px;}
+.gen-btn:hover{background:var(--gold);color:var(--ink);}
+.gen-output{background:white;border:1px solid var(--border);min-height:420px;display:flex;flex-direction:column;}
+.gen-out-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.gen-out-title{font-size:12px;font-weight:700;}
+.gen-out-body{padding:18px;flex:1;display:flex;align-items:flex-start;}
+.output-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:300px;color:var(--muted);gap:8px;}
+.output-placeholder-icon{font-size:36px;opacity:0.4;}
+.output-text{font-family:'Outfit',sans-serif;font-size:13px;line-height:2;color:var(--ink2);white-space:pre-wrap;width:100%;}
+.typing-cursor{display:inline-block;width:2px;height:14px;background:var(--gold);vertical-align:middle;animation:blink 0.7s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.memory-context-box{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--teal);padding:12px 14px;margin-bottom:14px;}
+.mc-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:6px;}
+.mc-body{font-size:11px;color:#5a7060;line-height:1.7;font-style:italic;}
+
+/* SEASON ARC */
+.season-arc{display:flex;flex-direction:column;gap:0;}
+.sa-row{display:grid;grid-template-columns:110px 130px 1fr;gap:0;border:1px solid var(--border);border-top:none;cursor:pointer;transition:all 0.15s;position:relative;}
+.sa-row:first-child{border-top:1px solid var(--border);}
+.sa-row:hover{background:var(--bg2);}
+.sa-row.active-row{background:var(--bg2);}
+.sa-phase{padding:12px 14px;border-right:1px solid var(--border);background:white;}
+.sa-phase-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:3px;}
+.sa-phase-date{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;}
+.sa-emotion{padding:12px 14px;border-right:1px solid var(--border);background:white;}
+.sa-em-label{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;font-weight:700;margin-bottom:4px;}
+.sa-em-quote{font-size:10px;color:var(--muted);line-height:1.5;font-style:italic;}
+.sa-vaani{padding:12px 14px;background:white;}
+.sa-vaani-title{font-size:11px;font-weight:700;margin-bottom:4px;}
+.sa-vaani-body{font-size:11px;color:#6a5a48;line-height:1.65;}
+.sa-detail{display:none;border-top:1px solid var(--border);background:var(--bg2);padding:16px 18px;grid-column:1/-1;}
+.sa-detail.open{display:block;animation:fadeIn 0.2s ease;}
+.voice-bubble{background:white;border:1px solid var(--border);padding:14px 16px;margin-top:10px;border-left:3px solid var(--teal);}
+.vb-voice{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;color:var(--teal);margin-bottom:6px;}
+.vb-text{font-size:12px;color:var(--ink2);line-height:1.8;font-style:italic;}
+
+/* MEMORY CARDS */
+.memory-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.mc-card{background:white;border:1px solid var(--border);overflow:hidden;}
+.mc-card-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.mc-card-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;}
+.mc-card-loc{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.06em;margin-top:2px;}
+.mc-trust{font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;}
+.trust-trusted{background:var(--green-l);color:var(--green-d);border:1px solid #a0d8b0;}
+.trust-warm{background:var(--gold-l);color:var(--gold-d);border:1px solid #e0c870;}
+.trust-cold{background:var(--bg3);color:var(--muted);border:1px solid var(--border);}
+.mc-card-body{padding:14px 16px;}
+.mc-field{display:flex;gap:10px;margin-bottom:8px;font-size:11px;}
+.mc-field-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);min-width:90px;padding-top:1px;font-weight:600;}
+.mc-field-val{color:var(--ink2);line-height:1.6;flex:1;}
+.mc-msg-preview{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--teal);padding:10px 12px;margin-top:10px;font-size:11px;color:#507060;line-height:1.7;font-style:italic;}
+.mc-msg-label{font-family:'JetBrains Mono',monospace;font-size:7px;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:4px;}
+
+/* VISIT CARDS */
+.visit-card{background:white;border:1px solid var(--border);border-left:4px solid transparent;margin-bottom:8px;cursor:pointer;transition:all 0.15s;}
+.visit-card:hover{transform:translateX(2px);box-shadow:2px 3px 10px rgba(0,0,0,0.05);}
+.visit-card.CRITICAL{border-left-color:var(--red);}
+.visit-card.HIGH{border-left-color:var(--amber);}
+.visit-card.MEDIUM{border-left-color:var(--gold);}
+.visit-card.LOW{border-left-color:var(--green);}
+.vc-head{padding:12px 16px;display:flex;align-items:flex-start;gap:12px;}
+.vc-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--bg3);line-height:1;flex-shrink:0;min-width:32px;}
+.vc-info{flex:1;}
+.vc-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+.vc-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.05em;display:flex;gap:10px;flex-wrap:wrap;}
+.vc-right{text-align:right;flex-shrink:0;}
+.vc-time{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;}
+.vc-dist{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);}
+.vc-body{padding:0 16px 14px 60px;display:none;animation:fadeIn 0.2s ease;}
+.vc-body.open{display:block;}
+.vc-reasons{list-style:none;margin-bottom:10px;display:flex;flex-direction:column;gap:4px;}
+.vc-reasons li{font-size:11px;color:var(--ink2);line-height:1.5;}
+.vc-rec-row{background:var(--bg2);border:1px solid var(--border);padding:9px 12px;display:flex;gap:12px;margin-bottom:6px;}
+.vc-rec-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);flex-shrink:0;padding-top:1px;font-weight:600;min-width:60px;}
+.vc-rec-val{font-size:11px;color:var(--ink2);line-height:1.6;}
+.emotion-flag{display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 8px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;margin-top:6px;}
+.ef-panic{background:var(--red-l);color:var(--red-d);border:1px solid #f0b8b0;}
+.ef-stable{background:var(--green-l);color:var(--green-d);border:1px solid #a0d8b0;}
+.ef-recover{background:var(--amber-l);color:var(--amber-d);border:1px solid #e8c080;}
+.memory-flag{background:var(--teal-l);color:var(--teal-d);border:1px solid #90d0c8;display:inline-flex;align-items:center;gap:5px;font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 8px;letter-spacing:0.08em;text-transform:uppercase;font-weight:700;}
+
+/* REP SUMMARY */
+.rep-summary{background:white;border:1px solid var(--border);padding:16px;margin-bottom:16px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+.rs-item{text-align:center;}
+.rs-num{font-family:'Playfair Display',serif;font-size:24px;font-weight:900;line-height:1;margin-bottom:3px;}
+.rs-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+
+/* DIVIDER */
+hr.d{border:none;border-top:1px solid var(--border);margin:18px 0;}
+.sec-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);padding-bottom:8px;border-bottom:1px solid var(--border);margin-bottom:12px;font-weight:700;}
+ul.bl{list-style:none;display:flex;flex-direction:column;gap:5px;}
+ul.bl li{font-size:12px;color:#6a5a48;padding-left:13px;position:relative;line-height:1.65;}
+ul.bl li::before{content:'›';position:absolute;left:0;color:var(--gold);}
+strong{font-weight:700;}
+::-webkit-scrollbar{width:4px;height:4px;} ::-webkit-scrollbar-track{background:var(--bg2);} ::-webkit-scrollbar-thumb{background:var(--border2);}
+
+/* INST TIER */
+.inst-card{background:white;border:1px solid var(--border);border-left:4px solid var(--amber);padding:18px;margin-bottom:10px;transition:all 0.15s;}
+.inst-card:hover{transform:translateX(3px);}
+.inst-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;margin-bottom:3px;}
+.inst-role{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;}
+.inst-body{font-size:12px;color:#6a5a48;line-height:1.75;}
+.inst-action{background:var(--amber-l);border:1px solid #e8c080;padding:8px 12px;margin-top:10px;font-size:11px;color:var(--amber-d);line-height:1.6;}
+.inst-action strong{color:var(--amber-d);}
+
+/* CHAMPION CARD */
+.champ-card{background:white;border:1px solid var(--border);padding:16px;margin-bottom:8px;}
+.champ-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.champ-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;}
+.champ-body{font-size:12px;color:#6a5a48;line-height:1.75;}
+.points-bar{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.pb-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);min-width:50px;}
+.pb-bar{flex:1;height:6px;background:var(--bg3);border-radius:1px;overflow:hidden;}
+.pb-fill{height:100%;background:var(--gold);border-radius:1px;}
+.pb-val{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--gold);min-width:28px;text-align:right;}
+
+/* LONG VISION */
+.vision-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-bottom:20px;}
+.vs-item{padding:20px;text-align:center;}
+.vs-year{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:700;}
+.vs-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;margin-bottom:8px;}
+.vs-body{font-size:11px;color:#6a5a48;line-height:1.7;}
+
+/* SPLIT */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-bottom:18px;}
+.sp{background:white;border:1px solid var(--border);padding:16px 18px;}
+.sp-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;font-weight:700;margin-bottom:10px;}
+
+/* QUOTE */
+.quote{border-left:2px solid var(--gold);padding:14px 18px;background:white;margin-bottom:20px;font-family:'Playfair Display',serif;font-size:16px;font-style:italic;font-weight:400;line-height:1.5;color:var(--ink);}
+.quote cite{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;font-style:normal;color:var(--muted);margin-top:6px;letter-spacing:0.1em;text-transform:uppercase;}
+.log-stop-btn{padding:8px 14px;background:var(--bg2);border:1px solid var(--border);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;color:var(--ink2);}
+.log-stop-btn:hover{border-color:var(--gold);background:var(--gold-l);}
+.log-stop-btn.selected{background:var(--ink);color:var(--gold);border-color:var(--ink);}
+.log-outcome-btn{padding:10px 16px;border:1px solid var(--border);background:var(--bg);font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;color:var(--ink2);flex:1;text-align:center;}
+.log-outcome-btn:hover{border-color:var(--gold);}
+.log-outcome-btn.sel-sale{background:var(--green-l);border-color:#a0d8b0;color:var(--green-d);}
+.log-outcome-btn.sel-inquiry{background:var(--gold-l);border-color:#e0c870;color:var(--gold-d);}
+.log-outcome-btn.sel-none{background:var(--bg3);border-color:var(--border2);color:var(--muted);}
+.log-outcome-btn.sel-healthy{background:var(--green-l);border-color:#a0d8b0;color:var(--green-d);}
+.log-outcome-btn.sel-mild{background:var(--amber-l);border-color:#e8c080;color:var(--amber-d);}
+.log-outcome-btn.sel-severe{background:var(--red-l);border-color:#f0c0b8;color:var(--red-d);}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-main">VAANI</div>
+    <div class="sb-logo-v">v3.0 — Rural Trust Infrastructure</div>
+    <div class="sb-logo-sub">Season-Long Companion<br>for 150M Farming Households</div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Core System</div>
+    <div class="ni active" onclick="nav('dashboard',this)"><span class="ni-icon">🗺</span>Territory + Emotion<span class="ni-badge">3 PANIC</span></div>
+    <div class="ni" onclick="nav('generator',this)"><span class="ni-icon">✍️</span>V3 Content Generator</div>
+    <div class="ni" onclick="nav('season',this)"><span class="ni-icon">🌾</span>Season Arc<span class="ni-badge ni-badge-t">NEW</span></div>
+    <div class="ni" onclick="nav('memory',this)"><span class="ni-icon">🧠</span>Farmer Memory<span class="ni-badge ni-badge-t">NEW</span></div>
+    <div class="ni" onclick="nav('rep',this)"><span class="ni-icon">🗂</span>Field Operations Plan<span class="ni-badge">UNIFIED</span></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-lbl">Intelligence</div>
+    <div class="ni" onclick="nav('vision',this)"><span class="ni-icon">🔭</span>Long-Term Vision</div>
+  </div>
+  <div class="sb-bottom">
+    <div class="rep-card">
+      <div class="rep-name">Suresh Kumar</div>
+      <div class="rep-ter">Field Representative<br>Krishna + Guntur · AP<br>District Mode: <span style="color:#e87060">PANIC ⚠</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title" id="page-title">Territory + Emotion Dashboard</div>
+    <div class="tb-right">
+      <span class="pill pill-r">3 Districts in Panic</span>
+      <span class="pill pill-g">Kharif Season</span>
+      <span class="pill pill-t">V3 — Memory Active</span>
+      <span class="pill pill-a">20 Districts Live</span>
+      <span class="tb-date">Mon, 13 May 2026 · 08:42 AM</span>
+    </div>
+  </div>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="section active" id="sec-dashboard">
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Territory + Emotional State Dashboard</div>
+        <div class="pg-sub">V3 adds district emotional mode alongside health scores — no other team has this column</div>
+      </div>
+    </div>
+
+    <div class="panic-banner">
+      <div class="panic-title">⚠ PANIC MODE DETECTED — Krishna, Guntur, Warangal Districts</div>
+      <div class="panic-body"><strong>VAANI emotional intelligence alert:</strong> 7+ farmer reports in 36 hours. Rumor spread pattern detected. Communication mode shifted from <em>Informational → Stabilizing</em>. All messaging for these districts now leads with calm authority and honest situation assessment — NOT product recommendations. Field rep opening scripts updated accordingly.</div>
+    </div>
+
+    <div class="stat-strip">
+      <div class="stat-box sb-panic"><div class="stat-num">3</div><div class="stat-lbl">Panic Districts</div></div>
+      <div class="stat-box sb-high"><div class="stat-num">4</div><div class="stat-lbl">High Alert</div></div>
+      <div class="stat-box sb-recover"><div class="stat-num">5</div><div class="stat-lbl">Recovering</div></div>
+      <div class="stat-box sb-stable"><div class="stat-num">6</div><div class="stat-lbl">Stable</div></div>
+      <div class="stat-box sb-confident"><div class="stat-num">2</div><div class="stat-lbl">Confident</div></div>
+    </div>
+
+    <!-- Map -->
+    <div style="background:white;border:1px solid var(--border);margin-bottom:18px;overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:12px;font-weight:700;">India District Map — Territory Score + Emotional Mode</div>
+        <div style="display:flex;gap:12px;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);">
+          <span>🔴 Panic</span><span>🟠 High</span><span>🟡 Recovering</span><span>🟢 Stable</span><span>🔵 Confident</span>
+        </div>
+      </div>
+      <div style="background:#e4f0ea;padding:14px;position:relative;min-height:290px;overflow:hidden;">
+        <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:280px;">
+          <defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+          <rect width="700" height="320" fill="#d8eae0"/>
+          <path d="M 180,35 L 320,28 L 420,45 L 500,75 L 560,125 L 590,180 L 600,240 L 575,295 L 530,315 L 490,308 L 450,285 L 410,260 L 375,240 L 350,255 L 330,275 L 310,285 L 290,275 L 270,255 L 255,235 L 240,215 L 225,190 L 215,165 L 205,135 L 195,100 L 185,65 Z" fill="#c4d8b4" stroke="#a8c898" stroke-width="1.5"/>
+          <!-- PANIC districts with pulsing rings -->
+          <g filter="url(#glow)">
+            <circle cx="440" cy="238" r="20" fill="#b83020" opacity="0.92"/>
+            <circle cx="440" cy="238" r="20" fill="none" stroke="white" stroke-width="1.5"/>
+            <text x="440" y="243" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="JetBrains Mono">87</text>
+            <text x="440" y="262" text-anchor="middle" fill="#b83020" font-size="9" font-family="Outfit" font-weight="700">Krishna</text>
+            <text x="440" y="272" text-anchor="middle" fill="#b83020" font-size="8" font-family="JetBrains Mono">PANIC</text>
+          </g>
+          <circle cx="440" cy="238" r="28" fill="none" stroke="#b83020" stroke-width="1" opacity="0.4"><animate attributeName="r" values="20;35;20" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.4;0;0.4" dur="2s" repeatCount="indefinite"/></circle>
+          <g filter="url(#glow)">
+            <circle cx="410" cy="265" r="17" fill="#b83020" opacity="0.88"/>
+            <text x="410" y="269" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">82</text>
+            <text x="410" y="286" text-anchor="middle" fill="#b83020" font-size="8" font-family="Outfit" font-weight="700">Guntur</text>
+          </g>
+          <circle cx="410" cy="265" r="26" fill="none" stroke="#b83020" stroke-width="1" opacity="0.3"><animate attributeName="r" values="17;30;17" dur="2.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.3;0;0.3" dur="2.2s" repeatCount="indefinite"/></circle>
+          <g>
+            <circle cx="460" cy="212" r="16" fill="#b83020" opacity="0.82"/>
+            <text x="460" y="216" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">81</text>
+            <text x="460" y="233" text-anchor="middle" fill="#b83020" font-size="8" font-family="Outfit" font-weight="700">Warangal</text>
+          </g>
+          <!-- HIGH -->
+          <g><circle cx="368" cy="172" r="14" fill="#c06810" opacity="0.85"/><text x="368" y="176" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">74</text><text x="368" y="193" text-anchor="middle" fill="#c06810" font-size="8" font-family="Outfit">Vidarbha</text></g>
+          <g><circle cx="300" cy="188" r="13" fill="#c06810" opacity="0.8"/><text x="300" y="192" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">71</text><text x="300" y="208" text-anchor="middle" fill="#c06810" font-size="8" font-family="Outfit">Nashik</text></g>
+          <g><circle cx="438" cy="295" r="13" fill="#c06810" opacity="0.8"/><text x="438" y="299" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">68</text><text x="438" y="313" text-anchor="middle" fill="#c06810" font-size="8" font-family="Outfit">Thanjavur</text></g>
+          <!-- RECOVERING -->
+          <g><circle cx="418" cy="195" r="12" fill="#b8780a" opacity="0.8"/><text x="418" y="199" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">58</text><text x="418" y="215" text-anchor="middle" fill="#b8780a" font-size="8" font-family="Outfit">Bidar</text></g>
+          <g><circle cx="298" cy="218" r="11" fill="#b8780a" opacity="0.75"/><text x="298" y="222" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">54</text><text x="298" y="237" text-anchor="middle" fill="#b8780a" font-size="8" font-family="Outfit">Pune</text></g>
+          <!-- STABLE -->
+          <g><circle cx="326" cy="148" r="11" fill="#2a7040" opacity="0.8"/><text x="326" y="152" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">38</text><text x="326" y="168" text-anchor="middle" fill="#2a7040" font-size="8" font-family="Outfit">Indore</text></g>
+          <g><circle cx="305" cy="72" r="11" fill="#2a7040" opacity="0.8"/><text x="305" y="76" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">28</text><text x="305" y="92" text-anchor="middle" fill="#2a7040" font-size="8" font-family="Outfit">Ludhiana</text></g>
+          <g><circle cx="350" cy="85" r="10" fill="#2a7040" opacity="0.75"/><text x="350" y="89" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="JetBrains Mono">24</text><text x="350" y="104" text-anchor="middle" fill="#2a7040" font-size="8" font-family="Outfit">Karnal</text></g>
+          <!-- CONFIDENT -->
+          <g><circle cx="388" cy="255" r="11" fill="#1a5888" opacity="0.8"/><text x="388" y="259" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="JetBrains Mono">32</text><text x="388" y="275" text-anchor="middle" fill="#1a5888" font-size="8" font-family="Outfit">Mysuru</text></g>
+          <!-- Legend -->
+          <rect x="8" y="8" width="148" height="110" rx="2" fill="white" opacity="0.92" stroke="#cfc4b0" stroke-width="1"/>
+          <text x="18" y="24" font-size="8" font-family="JetBrains Mono" fill="#8a7860" letter-spacing="1">EMOTIONAL MODE</text>
+          <circle cx="23" cy="36" r="6" fill="#b83020"/><text x="35" y="40" font-size="9" font-family="Outfit" fill="#1a1208">Panic (urgent care)</text>
+          <circle cx="23" cy="51" r="6" fill="#c06810"/><text x="35" y="55" font-size="9" font-family="Outfit" fill="#1a1208">High Alert</text>
+          <circle cx="23" cy="66" r="6" fill="#b8780a"/><text x="35" y="70" font-size="9" font-family="Outfit" fill="#1a1208">Recovering</text>
+          <circle cx="23" cy="81" r="6" fill="#2a7040"/><text x="35" y="85" font-size="9" font-family="Outfit" fill="#1a1208">Stable</text>
+          <circle cx="23" cy="96" r="6" fill="#1a5888"/><text x="35" y="100" font-size="9" font-family="Outfit" fill="#1a1208">Confident</text>
+          <text x="18" y="115" font-size="7" font-family="JetBrains Mono" fill="#b8780a">● PANIC = pulsing rings</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- District Table with Emotion Column -->
+    <div style="background:white;border:1px solid var(--border);overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:12px;font-weight:700;">District Breakdown — V3 with Emotional Mode Column</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">★ Emotional mode is the V3 exclusive column</div>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>District</th><th>State</th><th>Crop · Stage</th><th>Active Threat</th><th>Score</th><th>Urgency</th><th>★ Emotional Mode</th><th>Pulse Reports</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Krishna</strong></td><td>Andhra Pradesh</td><td>Paddy · Tillering</td><td>Brown Planthopper</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:87%;background:#b83020"></div></div><span class="sval" style="color:#b83020">87</span></div></td><td><span class="urg CRITICAL">Critical</span></td><td><span class="em-badge em-panic">🔴 Panic</span></td><td>🔴 7 reports</td></tr>
+          <tr><td><strong>Guntur</strong></td><td>Andhra Pradesh</td><td>Cotton · Flowering</td><td>Pink Bollworm</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:82%;background:#b83020"></div></div><span class="sval" style="color:#b83020">82</span></div></td><td><span class="urg CRITICAL">Critical</span></td><td><span class="em-badge em-panic">🔴 Panic</span></td><td>🔴 5 reports</td></tr>
+          <tr><td><strong>Warangal</strong></td><td>Telangana</td><td>Paddy · Tillering</td><td>Blast Disease</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:81%;background:#b83020"></div></div><span class="sval" style="color:#b83020">81</span></div></td><td><span class="urg CRITICAL">Critical</span></td><td><span class="em-badge em-panic">🔴 Panic</span></td><td>🟠 3 reports</td></tr>
+          <tr><td><strong>Vidarbha</strong></td><td>Maharashtra</td><td>Cotton · Vegetative</td><td>Whitefly</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:74%;background:#c06810"></div></div><span class="sval" style="color:#c06810">74</span></div></td><td><span class="urg HIGH">High</span></td><td><span class="em-badge" style="background:var(--amber-l);color:var(--amber-d);border:1px solid #e8c080;">🟠 High Alert</span></td><td>🟡 2 reports</td></tr>
+          <tr><td><strong>Nashik</strong></td><td>Maharashtra</td><td>Grapes · Flowering</td><td>Downy Mildew</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:71%;background:#c06810"></div></div><span class="sval" style="color:#c06810">71</span></div></td><td><span class="urg HIGH">High</span></td><td><span class="em-badge" style="background:var(--amber-l);color:var(--amber-d);border:1px solid #e8c080;">🟠 High Alert</span></td><td>🟡 1 report</td></tr>
+          <tr><td><strong>Bidar</strong></td><td>Karnataka</td><td>Tur Dal · Flowering</td><td>Pod Borer</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:58%;background:#b8780a"></div></div><span class="sval" style="color:#b8780a">58</span></div></td><td><span class="urg MEDIUM">Medium</span></td><td><span class="em-badge em-recover">🟡 Recovering</span></td><td>🟡 0 reports</td></tr>
+          <tr><td><strong>Indore</strong></td><td>Madhya Pradesh</td><td>Soybean · Vegetative</td><td>Girdle Beetle</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:38%;background:#2a7040"></div></div><span class="sval" style="color:#2a7040">38</span></div></td><td><span class="urg LOW">Low</span></td><td><span class="em-badge em-stable">🟢 Stable</span></td><td>🟢 0 reports</td></tr>
+          <tr><td><strong>Ludhiana</strong></td><td>Punjab</td><td>Wheat · Maturity</td><td>Aphids</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:28%;background:#2a7040"></div></div><span class="sval" style="color:#2a7040">28</span></div></td><td><span class="urg LOW">Low</span></td><td><span class="em-badge em-stable">🟢 Stable</span></td><td>🟢 0 reports</td></tr>
+          <tr><td><strong>Mysuru</strong></td><td>Karnataka</td><td>Ragi · Vegetative</td><td>Blast Disease</td><td><div class="sbar-wrap"><div class="sbar"><div class="sbar-fill" style="width:32%;background:#1a5888"></div></div><span class="sval" style="color:#1a5888">32</span></div></td><td><span class="urg LOW">Low</span></td><td><span class="em-badge em-confident">🔵 Confident</span></td><td>🟢 0 reports</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══ CONTENT GENERATOR ═══ -->
+  <div class="section" id="sec-generator">
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">V3 Content Generator</div>
+        <div class="pg-sub">Mode-adaptive · Memory-context · 5 distinct voice personas · Open-loop storytelling hooks</div>
+      </div>
+    </div>
+
+    <div class="gen-wrap">
+      <div class="gen-form">
+        <div class="gen-form-head">⚙ Configure Content — V3</div>
+        <div class="gen-form-body">
+          <div class="fg">
+            <label class="fl">★ Emotional Mode</label>
+            <div class="mode-toggle">
+              <div class="mode-btn active-panic" onclick="setMode('panic',this)" id="mode-panic">🔴 Panic</div>
+              <div class="mode-btn" onclick="setMode('recover',this)" id="mode-recover">🟡 Recover</div>
+              <div class="mode-btn" onclick="setMode('stable',this)" id="mode-stable">🟢 Stable</div>
+              <div class="mode-btn" onclick="setMode('confident',this)" id="mode-confident">🔵 Confident</div>
+            </div>
+          </div>
+          <div class="fg">
+            <label class="fl">★ Voice Persona</label>
+            <select class="fs" id="gen-voice">
+              <option value="farmer">Direct Farmer — WhatsApp / IVR Check-in</option>
+              <option value="rep">Field Rep — Confident, Direct</option>
+              <option value="dealer">Agrodealer — Practical, Street-Smart</option>
+              <option value="champion">Peer Champion — Experience-Sharing</option>
+              <option value="vaani">VAANI Companion — Warm, Remembering</option>
+              <option value="elder">Village Elder — Calm Authority</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">District</label>
+            <select class="fs" id="gen-district">
+              <option>Krishna, Andhra Pradesh</option>
+              <option>Guntur, Andhra Pradesh</option>
+              <option>Warangal, Telangana</option>
+              <option>Nashik, Maharashtra</option>
+              <option>Ludhiana, Punjab</option>
+              <option>Indore, Madhya Pradesh</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Crop + Stage</label>
+            <select class="fs" id="gen-crop">
+              <option value="Paddy,Tillering">Paddy — Tillering</option>
+              <option value="Cotton,Flowering">Cotton — Flowering</option>
+              <option value="Wheat,Grain Filling">Wheat — Grain Filling</option>
+              <option value="Soybean,Vegetative">Soybean — Vegetative</option>
+              <option value="Grapes,Flowering">Grapes — Flowering</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">Language</label>
+            <select class="fs" id="gen-lang">
+              <option>Telugu</option>
+              <option>Hindi</option>
+              <option>Marathi</option>
+              <option>Tamil</option>
+              <option>English</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="fl">★ Farmer Memory Context</label>
+            <select class="fs" id="gen-memory">
+              <option value="none">No prior interaction (Cold)</option>
+              <option value="warm">1 prior interaction (Warm)</option>
+              <option value="trusted">3+ interactions (Trusted)</option>
+            </select>
+          </div>
+          <button class="gen-btn" onclick="generateV3Content()">⚡ Generate V3 Content</button>
+        </div>
+      </div>
+
+      <div class="gen-output">
+        <div class="gen-out-head">
+          <div class="gen-out-title">Generated Output</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="gen-meta"></div>
+        </div>
+        <div class="gen-out-body" id="gen-body">
+          <div class="output-placeholder">
+            <div class="output-placeholder-icon">✍️</div>
+            <div style="font-size:13px;font-weight:600;">Configure and click Generate</div>
+            <div style="font-size:11px;color:var(--muted);">V3 output adapts to emotional mode, voice persona, and memory context</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="d">
+    <div class="sec-lbl">Quick Demo — Click to See Mode Difference</div>
+    <div class="g4">
+      <div onclick="loadQuickDemo('panic_telugu')" style="background:white;border:1px solid var(--border);border-left:3px solid var(--red);padding:14px;cursor:pointer;transition:all 0.15s;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:6px;font-weight:700;">🔴 Panic Mode</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px;">Agrodealer — Telugu</div>
+        <div style="font-size:11px;color:var(--muted);">Krishna · Paddy · Stabilizing first, no product push</div>
+      </div>
+      <div onclick="loadQuickDemo('stable_champion')" style="background:white;border:1px solid var(--border);border-left:3px solid var(--green);padding:14px;cursor:pointer;transition:all 0.15s;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:6px;font-weight:700;">🟢 Stable Mode</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px;">Peer Champion — Hindi</div>
+        <div style="font-size:11px;color:var(--muted);">Indore · Soybean · Natural sharing, slight imperfection</div>
+      </div>
+      <div onclick="loadQuickDemo('memory_vaani')" style="background:white;border:1px solid var(--border);border-left:3px solid var(--teal);padding:14px;cursor:pointer;transition:all 0.15s;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);margin-bottom:6px;font-weight:700;">🧠 Memory-Based</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px;">VAANI Companion — Telugu</div>
+        <div style="font-size:11px;color:var(--muted);">Trusted farmer · References past conversation</div>
+      </div>
+      <div onclick="loadQuickDemo('farmer_direct')" style="background:white;border:1px solid var(--border);border-left:3px solid var(--rose);padding:14px;cursor:pointer;transition:all 0.15s;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--rose);margin-bottom:6px;font-weight:700;">📱 Direct Farmer</div>
+        <div style="font-size:12px;font-weight:700;margin-bottom:4px;">WhatsApp + IVR — Telugu</div>
+        <div style="font-size:11px;color:var(--muted);">Season companion check-in · Care-first · No product</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SEASON ARC ═══ -->
+  <div class="section" id="sec-season">
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Season Companion Arc</div>
+        <div class="pg-sub">One farmer's complete 12-touchpoint journey · Click any phase to see the actual message VAANI sends</div>
+      </div>
+    </div>
+
+    <div class="quote">
+      "VAANI is not a notification system. It walks alongside the farmer through sowing anxiety, pest fear, mandi timing, and harvest relief. The relationship is the product."
+      <cite>— VAANI V3 Core Philosophy</cite>
+    </div>
+
+    <div style="background:white;border:1px solid var(--border);padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;">Showing journey for:</div>
+      <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:700;">Ramaiah Garu · Kalidindi Village, Krishna District · Paddy Farmer</div>
+      <span class="pill pill-t" style="margin-left:auto;">Trusted — 3 seasons</span>
+    </div>
+
+    <div class="season-arc" id="season-arc"></div>
+  </div>
+
+  <!-- ═══ FARMER MEMORY ═══ -->
+  <div class="section" id="sec-memory">
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Farmer Memory System</div>
+        <div class="pg-sub">Every farmer remembered across seasons · The moat competitors cannot copy</div>
+      </div>
+    </div>
+
+    <div style="background:white;border:1px solid var(--border);border-left:4px solid var(--teal);padding:14px 18px;margin-bottom:18px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:6px;">Why Memory Is the Real Moat</div>
+      <div style="font-size:12px;color:#507060;line-height:1.8;"><strong>Stateless:</strong> "How is your crop?" — Farmer feels like a data point.<br><strong>Memory-based:</strong> "Ramaiah ji — last month you mentioned yellowing after rain in the east plot. Did it recover? Same rain pattern is forecast this week." — Farmer feels known, cared for, remembered. That is trust. That cannot be reverse-engineered.</div>
+    </div>
+
+    <div class="memory-grid" id="memory-grid"></div>
+  </div>
+
+  <!-- ═══ REP PLAN V3 ═══ -->
+  <!-- ═══ UNIFIED FIELD OPERATIONS PLAN ═══ -->
+  <div class="section" id="sec-rep">
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Field Operations — Suresh Kumar</div>
+        <div class="pg-sub">Unified daily plan · All 5 stop types · Territory-scoped · Krishna + Guntur Districts only</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="pill pill-r">District: PANIC MODE</span>
+        <span class="pill pill-g">Mon 13 May 2026</span>
+      </div>
+    </div>
+
+    <!-- HOW THIS WORKS BANNER -->
+    <div style="background:var(--ink);color:#c8b890;padding:14px 18px;margin-bottom:18px;display:flex;gap:14px;align-items:flex-start;">
+      <div style="font-size:18px;flex-shrink:0;">⚙</div>
+      <div style="font-size:12px;line-height:1.8;"><strong style="color:var(--gold);">How VAANI built today's plan:</strong> Overnight scan of dealer inventory → farmer pulse reports → champion rewards engine → institutional calendar → territory scores. All collapsed into one optimized route. Rep opens app — sees one day, one map, one flow. <strong style="color:var(--gold);">Showing Krishna + Guntur territory only.</strong> Ludhiana, Nashik, Punjab — not Suresh's problem.</div>
+    </div>
+
+    <!-- DAY SUMMARY STRIP -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px;margin-bottom:18px;">
+      <div style="background:white;border:1px solid var(--border);padding:14px 10px;text-align:center;border-top:3px solid var(--ink);">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--ink);line-height:1;margin-bottom:3px;">6</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Total Stops</div>
+      </div>
+      <div style="background:white;border:1px solid var(--border);padding:14px 10px;text-align:center;border-top:3px solid var(--blue);">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--blue);line-height:1;margin-bottom:3px;">3</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Dealer Visits</div>
+      </div>
+      <div style="background:white;border:1px solid var(--border);padding:14px 10px;text-align:center;border-top:3px solid var(--green);">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--green);line-height:1;margin-bottom:3px;">1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Farmer Field</div>
+      </div>
+      <div style="background:white;border:1px solid var(--border);padding:14px 10px;text-align:center;border-top:3px solid var(--gold);">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--gold);line-height:1;margin-bottom:3px;">1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Champion Sync</div>
+      </div>
+      <div style="background:white;border:1px solid var(--border);padding:14px 10px;text-align:center;border-top:3px solid var(--amber);">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--amber);line-height:1;margin-bottom:3px;">1</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Inst. Schedule</div>
+      </div>
+      <div style="background:white;border:1px solid var(--border);padding:14px 10px;text-align:center;border-top:3px solid var(--muted);">
+        <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:900;color:var(--muted);line-height:1;margin-bottom:3px;">58km</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Total Route</div>
+      </div>
+    </div>
+
+    <!-- LOCAL ROUTE MAP -->
+    <div style="background:white;border:1px solid var(--border);margin-bottom:18px;overflow:hidden;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:12px;font-weight:700;">Today's Route — Krishna + Guntur District Only</div>
+        <div style="display:flex;gap:10px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);">
+          <span>🔵 Dealer</span><span>🟢 Farmer</span><span>⭐ Champion</span><span>🏛 Institutional</span>
+        </div>
+      </div>
+      <div style="background:#e8f4f0;padding:12px;min-height:260px;">
+        <svg viewBox="0 0 720 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:230px;">
+          <!-- Road network simplified for Krishna-Guntur region -->
+          <rect width="720" height="240" fill="#ddeee8"/>
+          <!-- Roads -->
+          <path d="M 80,120 L 200,110 L 320,130 L 440,115 L 560,125 L 660,118" stroke="#c8c0a8" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <path d="M 200,110 L 220,60" stroke="#c8c0a8" stroke-width="5" fill="none"/>
+          <path d="M 320,130 L 340,185" stroke="#c8c0a8" stroke-width="5" fill="none"/>
+          <path d="M 440,115 L 460,170" stroke="#c8c0a8" stroke-width="5" fill="none"/>
+          <!-- Route line -->
+          <path d="M 100,120 L 200,110 L 320,130 L 340,185 L 460,170 L 560,125" stroke="#1a5888" stroke-width="3" fill="none" stroke-dasharray="8,4" opacity="0.8"/>
+          <!-- Start marker — Rep's base -->
+          <circle cx="80" cy="120" r="10" fill="#1a1208"/>
+          <text x="80" y="124" text-anchor="middle" fill="white" font-size="9" font-family="JetBrains Mono" font-weight="700">🏠</text>
+          <text x="80" y="140" text-anchor="middle" fill="#1a1208" font-size="8" font-family="Outfit" font-weight="600">Base</text>
+
+          <!-- Stop 1 — Dealer — Vijayawada -->
+          <circle cx="200" cy="110" r="16" fill="#1a5888" opacity="0.95"/>
+          <circle cx="200" cy="110" r="16" fill="none" stroke="white" stroke-width="2"/>
+          <text x="200" y="107" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="JetBrains Mono">01</text>
+          <text x="200" y="118" text-anchor="middle" fill="white" font-size="7" font-family="Outfit">DEALER</text>
+          <text x="200" y="135" text-anchor="middle" fill="#1a5888" font-size="9" font-family="Outfit" font-weight="700">Srinivas Agro</text>
+          <text x="200" y="146" text-anchor="middle" fill="#8a7860" font-size="8" font-family="JetBrains Mono">Vijayawada · 9AM</text>
+          <!-- Panic ring -->
+          <circle cx="200" cy="110" r="24" fill="none" stroke="#b83020" stroke-width="1.5" opacity="0.5">
+            <animate attributeName="r" values="16;28;16" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.5;0;0.5" dur="2s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- Stop 2 — Farmer Field — Kalidindi -->
+          <circle cx="320" cy="130" r="15" fill="#2a7040" opacity="0.95"/>
+          <circle cx="320" cy="130" r="15" fill="none" stroke="white" stroke-width="2"/>
+          <text x="320" y="127" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="JetBrains Mono">02</text>
+          <text x="320" y="138" text-anchor="middle" fill="white" font-size="7" font-family="Outfit">FIELD</text>
+          <text x="320" y="156" text-anchor="middle" fill="#2a7040" font-size="9" font-family="Outfit" font-weight="700">Ramaiah Farm</text>
+          <text x="320" y="167" text-anchor="middle" fill="#8a7860" font-size="8" font-family="JetBrains Mono">Kalidindi · 10:45AM</text>
+          <!-- Pulse indicator -->
+          <text x="338" y="118" font-size="10">📱</text>
+
+          <!-- Stop 3 — Dealer — Nuzvid -->
+          <circle cx="340" cy="185" r="14" fill="#1a5888" opacity="0.9"/>
+          <circle cx="340" cy="185" r="14" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="340" y="182" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="JetBrains Mono">03</text>
+          <text x="340" y="191" text-anchor="middle" fill="white" font-size="7" font-family="Outfit">DEALER</text>
+          <text x="340" y="207" text-anchor="middle" fill="#1a5888" font-size="9" font-family="Outfit" font-weight="700">Ramu Kisan</text>
+          <text x="340" y="218" text-anchor="middle" fill="#8a7860" font-size="8" font-family="JetBrains Mono">Nuzvid · 12:30PM</text>
+
+          <!-- Stop 4 — Champion — Kalidindi -->
+          <circle cx="460" cy="170" r="15" fill="#b8780a" opacity="0.95"/>
+          <circle cx="460" cy="170" r="15" fill="none" stroke="white" stroke-width="2"/>
+          <text x="460" y="167" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="JetBrains Mono">★</text>
+          <text x="460" y="178" text-anchor="middle" fill="white" font-size="7" font-family="Outfit">CHAMPION</text>
+          <text x="460" y="194" text-anchor="middle" fill="#b8780a" font-size="9" font-family="Outfit" font-weight="700">Venkatesh</text>
+          <text x="460" y="205" text-anchor="middle" fill="#8a7860" font-size="8" font-family="JetBrains Mono">Kalidindi · 2PM</text>
+
+          <!-- Stop 5 — Dealer — Gudivada -->
+          <circle cx="560" cy="125" r="13" fill="#1a5888" opacity="0.85"/>
+          <circle cx="560" cy="125" r="13" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="560" y="122" text-anchor="middle" fill="white" font-size="9" font-weight="bold" font-family="JetBrains Mono">04</text>
+          <text x="560" y="131" text-anchor="middle" fill="white" font-size="7" font-family="Outfit">DEALER</text>
+          <text x="560" y="147" text-anchor="middle" fill="#1a5888" font-size="9" font-family="Outfit" font-weight="700">Lakshmi Agro</text>
+          <text x="560" y="157" text-anchor="middle" fill="#8a7860" font-size="8" font-family="JetBrains Mono">Gudivada · 3:30PM</text>
+
+          <!-- Institutional note this WEEK -->
+          <rect x="580" y="10" width="130" height="52" rx="2" fill="white" opacity="0.9" stroke="#cfc4b0" stroke-width="1"/>
+          <text x="590" y="24" font-size="8" font-family="JetBrains Mono" fill="#c06810" font-weight="700">THIS WEEK — SCHEDULE</text>
+          <text x="590" y="37" font-size="9" font-family="Outfit" fill="#1a1208" font-weight="600">🏛 Srinivas Rao</text>
+          <text x="590" y="50" font-size="8" font-family="Outfit" fill="#8a7860">Panchayat · Qtrly due</text>
+
+          <!-- Distance labels on route -->
+          <text x="145" y="100" font-size="8" font-family="JetBrains Mono" fill="#8a7860">4.2km</text>
+          <text x="258" y="125" font-size="8" font-family="JetBrains Mono" fill="#8a7860">14km</text>
+          <text x="390" y="165" font-size="8" font-family="JetBrains Mono" fill="#8a7860">18km</text>
+          <text x="505" y="148" font-size="8" font-family="JetBrains Mono" fill="#8a7860">22km</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- PANIC MODE ALERT -->
+    <div style="background:var(--red-l);border:1px solid #f0c0b8;border-left:4px solid var(--red);padding:12px 16px;margin-bottom:18px;display:flex;gap:12px;align-items:flex-start;">
+      <div style="font-size:16px;flex-shrink:0;">⚠</div>
+      <div style="font-size:12px;color:var(--red-d);line-height:1.7;"><strong>PANIC MODE — Stops 1, 2, 3 are in affected zone.</strong> Do NOT open with product pitch at these stops. Open with: "Main jaanta hoon is hafte bahut tension chal rahi hai. Pehle honest tasveer batata hoon." Stabilize first. Product after trust is restored.</div>
+    </div>
+
+    <!-- UNIFIED STOP LIST -->
+    <div class="sec-lbl">Today's Unified Plan — Click any stop to expand full brief</div>
+    <div id="unified-stops"></div>
+
+    <!-- THIS WEEK SECTION -->
+    <div style="margin-top:28px;">
+      <div class="sec-lbl">This Week (Not Today) — VAANI Flagged</div>
+      <div style="background:white;border:1px solid var(--border);border-left:4px solid var(--amber);padding:16px 18px;margin-bottom:8px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+          <div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);font-weight:700;margin-bottom:6px;">🏛 INSTITUTIONAL — SCHEDULE THIS WEEK</div>
+            <div style="font-size:14px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:4px;">Srinivas Rao — Gram Panchayat Head, Kalidindi</div>
+            <div style="font-size:12px;color:#6a5a48;line-height:1.7;">Quarterly briefing is overdue by 12 days. Call to schedule. Agenda: district Kharif situation + request permission to present VAANI at June Gram Sabha. His endorsement = 200 farmers trusting VAANI instantly.<br><br><strong>Do NOT send a WhatsApp blast to his village before this meeting is confirmed.</strong></div>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;">Overdue by</div>
+            <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--amber);">12d</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:white;border:1px solid var(--border);border-left:4px solid var(--rose);padding:16px 18px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--rose);font-weight:700;margin-bottom:6px;">🏛 INSTITUTIONAL — SCHEDULE THIS WEEK</div>
+        <div style="font-size:14px;font-weight:700;font-family:'Playfair Display',serif;margin-bottom:4px;">Mohammed Ismail — Mandi Secretary, Vijayawada</div>
+        <div style="font-size:12px;color:#6a5a48;line-height:1.7;">Harvest season approaching. Schedule bi-annual meeting: propose VAANI mandi price intelligence on market board display. This costs Syngenta nothing and builds enormous goodwill with 300+ farmers who visit the mandi weekly.</div>
+      </div>
+    </div>
+
+    <!-- DEALER INTELLIGENCE PANEL -->
+    <div style="margin-top:28px;">
+      <div class="sec-lbl">Dealer Intelligence — Today's Visit Dealers</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div style="background:white;border:1px solid var(--border);overflow:hidden;">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:12px;font-weight:700;">Srinivas Agro</div>
+            <span class="pill pill-r">CRITICAL STOCK</span>
+          </div>
+          <div style="padding:12px 14px;">
+            <div style="display:flex;flex-direction:column;gap:7px;font-size:11px;color:#6a5a48;">
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Actara 25WG</span><span style="font-weight:700;color:var(--red);">6 packs left</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Engeo Pleno</span><span style="font-weight:700;color:var(--amber);">14 packs</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Amistar Top</span><span style="font-weight:700;color:var(--green);">28 packs</span></div>
+              <div style="margin-top:4px;padding:6px 8px;background:var(--red-l);border:1px solid #f0c0b8;font-size:10px;color:var(--red-d);">📦 Suggest reorder: 50 packs Actara — demand spike incoming</div>
+            </div>
+          </div>
+          <div style="padding:8px 14px;background:var(--gold-l);border-top:1px solid #e8d090;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold-d);font-weight:700;">7-DAY FORECAST: Actara demand +340% Thu–Sat</div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);overflow:hidden;">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:12px;font-weight:700;">Ramu Kisan Store</div>
+            <span class="pill pill-a">COMPETITOR ALERT</span>
+          </div>
+          <div style="padding:12px 14px;">
+            <div style="display:flex;flex-direction:column;gap:7px;font-size:11px;color:#6a5a48;">
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Amistar Top</span><span style="font-weight:700;color:var(--amber);">12 packs</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Actara 25WG</span><span style="font-weight:700;color:var(--green);">22 packs</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Bayer Belts</span><span style="font-weight:700;color:var(--red);">Promo running</span></div>
+              <div style="margin-top:4px;padding:6px 8px;background:var(--amber-l);border:1px solid #e8c080;font-size:10px;color:var(--amber-d);">⚠ Counter Bayer promo with Amistar systemic story</div>
+            </div>
+          </div>
+          <div style="padding:8px 14px;background:var(--gold-l);border-top:1px solid #e8d090;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold-d);font-weight:700;">7-DAY FORECAST: Amistar demand +180% from Wed</div>
+        </div>
+        <div style="background:white;border:1px solid var(--border);overflow:hidden;">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--border);background:var(--bg2);display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:12px;font-weight:700;">Lakshmi Agro Mart</div>
+            <span class="pill pill-gn">STABLE</span>
+          </div>
+          <div style="padding:12px 14px;">
+            <div style="display:flex;flex-direction:column;gap:7px;font-size:11px;color:#6a5a48;">
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Karate Zeon</span><span style="font-weight:700;color:var(--green);">35 packs</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Actara 25WG</span><span style="font-weight:700;color:var(--green);">18 packs</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:9px;">Score 250 EC</span><span style="font-weight:700;color:var(--amber);">9 packs</span></div>
+              <div style="margin-top:4px;padding:6px 8px;background:var(--green-l);border:1px solid #a0d8b0;font-size:10px;color:var(--green-d);">✅ Pre-season discussion — Cotton entering Vegetative</div>
+            </div>
+          </div>
+          <div style="padding:8px 14px;background:var(--gold-l);border-top:1px solid #e8d090;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold-d);font-weight:700;">7-DAY FORECAST: Karate Zeon demand steady +60%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTCOME LOGGER -->
+    <div style="margin-top:28px;">
+      <div class="sec-lbl">Outcome Logger — Log After Each Stop (3 Taps)</div>
+      <div style="background:white;border:1px solid var(--border);padding:18px;" id="outcome-logger">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;font-family:'Playfair Display',serif;">Which stop are you logging?</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;" id="log-stop-btns">
+          <button onclick="selectLogStop(this,'Srinivas Agro','dealer')" class="log-stop-btn">01 · Srinivas Agro</button>
+          <button onclick="selectLogStop(this,'Ramaiah Farm','farmer')" class="log-stop-btn">02 · Ramaiah Farm</button>
+          <button onclick="selectLogStop(this,'Ramu Kisan','dealer')" class="log-stop-btn">03 · Ramu Kisan</button>
+          <button onclick="selectLogStop(this,'Venkatesh','champion')" class="log-stop-btn">04 · Venkatesh ⭐</button>
+          <button onclick="selectLogStop(this,'Lakshmi Agro','dealer')" class="log-stop-btn">05 · Lakshmi Agro</button>
+        </div>
+        <div id="log-form" style="display:none;"></div>
+        <div id="log-success" style="display:none;background:var(--green-l);border:1px solid #a0d8b0;padding:14px 16px;color:var(--green-d);font-size:12px;line-height:1.7;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ VISION ═══ -->
+  <div class="section" id="sec-vision">
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Long-Term Vision</div>
+        <div class="pg-sub">What VAANI becomes in 5 years — the real reason this is worth building</div>
+      </div>
+    </div>
+    <div class="quote">
+      "We start with agriculture because that's where the trust problem is most acute. But trust infrastructure, once built, can carry anything. VAANI ends up as the nervous system of rural India."
+      <cite>— VAANI V3 Long-Term Positioning</cite>
+    </div>
+    <div class="vision-strip">
+      <div class="vs-item" style="background:var(--green-l);border:1px solid #a0d8b0;"><div class="vs-year">Year 1–2</div><div class="vs-title">Agricultural Trust Layer</div><div class="vs-body">Season-long companionship for Syngenta farmers. Memory accumulating. Emotional intelligence calibrating. Language dataset growing. 10 million trust relationships compounding.</div></div>
+      <div class="vs-item" style="background:var(--gold-l);border:1px solid #e0c870;"><div class="vs-year">Year 3–4</div><div class="vs-title">Rural Behavioral Intelligence Platform</div><div class="vs-body">Behavioral data valuable to insurance, supply chain, credit systems, and climate adaptation planning.</div></div>
+      <div class="vs-item" style="background:var(--blue-l);border:1px solid #a0c8e8;"><div class="vs-year">Year 5+</div><div class="vs-title">Rural Operating Layer</div><div class="vs-body">The nervous system through which rural India makes decisions about crops, commerce, finance, markets, and community.</div></div>
+    </div>
+    <div class="g4">
+      <div class="card cg"><div class="card-stripe"></div><div class="card-eye">Future Use 1</div><div class="card-title">Crop Insurance</div><div class="card-body">Behavioral + pulse data predicts farm-level risk far more accurately than satellite.</div></div>
+      <div class="card cb"><div class="card-stripe"></div><div class="card-eye">Future Use 2</div><div class="card-title">Rural Credit</div><div class="card-body">Trust history + decision patterns + outcomes = creditworthiness. Better than CIBIL for rural lending.</div></div>
+      <div class="card crs"><div class="card-stripe"></div><div class="card-eye">Future Use 3</div><div class="card-title">Climate Adaptation</div><div class="card-body">How farmers actually adapt to climate events at village level — irreplaceable policy data.</div></div>
+      <div class="card ca"><div class="card-stripe"></div><div class="card-eye">Future Use 4</div><div class="card-title">Supply Chain Intel</div><div class="card-body">Real-time farmer planting intentions 6 months before harvest — most accurate demand signal possible.</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ VISION ═══ -->
+  <div class="section" id="sec-vision">
+    <div class="pg-head">
+      <div>
+        <div class="pg-title">Long-Term Vision</div>
+        <div class="pg-sub">What VAANI becomes in 5 years — the real reason this is worth building</div>
+      </div>
+    </div>
+    <div class="quote">
+      "We start with agriculture because that's where the trust problem is most acute. But trust infrastructure, once built, can carry anything. VAANI ends up as the nervous system of rural India."
+      <cite>— VAANI V3 Long-Term Positioning</cite>
+    </div>
+    <div class="vision-strip">
+      <div class="vs-item" style="background:var(--green-l);border:1px solid #a0d8b0;">
+        <div class="vs-year">Year 1–2</div>
+        <div class="vs-title">Agricultural Trust Layer</div>
+        <div class="vs-body">Season-long companionship for Syngenta farmers. Memory accumulating. Emotional intelligence calibrating. Language dataset growing. 10 million trust relationships compounding.</div>
+      </div>
+      <div class="vs-item" style="background:var(--gold-l);border:1px solid #e0c870;">
+        <div class="vs-year">Year 3–4</div>
+        <div class="vs-title">Rural Behavioral Intelligence Platform</div>
+        <div class="vs-body">Behavioral data valuable to insurance (crop failure prediction), supply chain (demand forecasting), credit systems (farmer creditworthiness), and climate adaptation.</div>
+      </div>
+      <div class="vs-item" style="background:var(--blue-l);border:1px solid #a0c8e8;">
+        <div class="vs-year">Year 5+</div>
+        <div class="vs-title">Rural Operating Layer</div>
+        <div class="vs-body">The nervous system through which rural India makes decisions about crops, commerce, finance, markets, and community. The "village internet" that works because it speaks the right language.</div>
+      </div>
+    </div>
+    <div class="g4">
+      <div class="card cg"><div class="card-stripe"></div><div class="card-eye">Future Use 1</div><div class="card-title">Crop Insurance</div><div class="card-body">Behavioral + pulse data predicts farm-level risk far more accurately than satellite. VAANI data becomes insurance underwriting intelligence.</div></div>
+      <div class="card cb"><div class="card-stripe"></div><div class="card-eye">Future Use 2</div><div class="card-title">Rural Credit</div><div class="card-body">Trust history + decision patterns + outcomes = creditworthiness signal. Better than CIBIL for rural lending. Banks pay for this data.</div></div>
+      <div class="card crs"><div class="card-stripe"></div><div class="card-eye">Future Use 3</div><div class="card-title">Climate Adaptation</div><div class="card-body">How farmers actually adapt to climate events at village level. Irreplaceable data for policy bodies and international NGOs.</div></div>
+      <div class="card ca"><div class="card-stripe"></div><div class="card-eye">Future Use 4</div><div class="card-title">Supply Chain Intel</div><div class="card-body">Real-time farmer planting intentions — what, when, how much — 6 months before harvest. Most accurate agricultural demand signal possible.</div></div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<script>
+// ─── NAV ──────────────────────────────────────────────────────────────
+const TITLES = {dashboard:'Territory + Emotion Dashboard',generator:'V3 Content Generator',season:'Season Companion Arc',memory:'Farmer Memory System',rep:'Field Operations — Suresh Kumar · Krishna + Guntur',vision:'Long-Term Vision'};
+function nav(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('page-title').textContent=TITLES[id]||id;
+}
+
+// ─── CONTENT GENERATOR ────────────────────────────────────────────────
+let currentMode = 'panic';
+function setMode(mode,el){
+  currentMode=mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>{b.className='mode-btn';});
+  el.className=`mode-btn active-${mode}`;
+}
+
+const V3_OUTPUTS = {
+  // ── DIRECT FARMER OUTPUTS ──────────────────────────────────────────
+  farmer_telugu_stable:`📱 CHANNEL: WhatsApp Message
+━━━━━━━━━━━━━━━━━━━━━━━
+Sent to: Ramaiah Garu (+91-9848XXXXXX)
+Delivery: WhatsApp · Telugu · 08:30 AM
+Trust level: Trusted · Season touchpoint 4/12
+━━━━━━━━━━━━━━━━━━━━━━━
+
+నమస్కారం Ramaiah Garu 🙏
+
+ఈ వారం కృష్ణా జిల్లాలో వరి రైతులు ఒక విషయం గమనించారు — టిల్లరింగ్ దశలో ఆకుల అడుగు భాగం చూస్తే చాలా తేడా కనిపిస్తోంది.
+
+మీ పొలంలో కూడా ఒక్కసారి చూడండి — 2 నిమిషాలు మాత్రమే.
+
+అడుగు భాగంలో చిన్న గోధుమ రంగు మచ్చలు లేదా కదలిక కనిపిస్తే నాకు చెప్పండి.
+
+మీకు మంచి పంట కోసం 🌾
+
+━━━━━━━━━━━━━━━━━━━━━━━
+★ RULE APPLIED: No product mention (Touchpoint 4 — trust building phase)
+★ NEXT TOUCHPOINT: If farmer replies problem → immediate action triggered
+★ IF NO REPLY IN 3 DAYS: IVR call scheduled as follow-up`,
+
+  farmer_telugu_panic:`📱 CHANNEL: IVR Voice Call
+━━━━━━━━━━━━━━━━━━━━━━━
+Called: Ramaiah Garu (+91-9848XXXXXX)
+Delivery: Exotel IVR · Telugu · 08:30 AM
+Duration: ~45 seconds · Works on any phone
+District Mode: PANIC — stabilizing script
+━━━━━━━━━━━━━━━━━━━━━━━
+
+[IVR VOICE SCRIPT — TELUGU]
+[Farmer picks up]
+
+"నమస్కారం. ఇది VAANI కృషి సేవ నుండి."
+
+"కృష్ణా జిల్లాలో ఈ వారం చాలా ఆందోళన వ్యాపిస్తోంది అని మాకు తెలుసు."
+
+"నిజమైన చిత్రం ఏమిటంటే — సమస్య 3 మండలాలలో మాత్రమే ఉంది."
+
+"మీ పంట సురక్షితంగా ఉందా? తెలుసుకోవాలంటే:"
+
+"పంట బాగుంటే — 1 నొక్కండి"
+"కొంచెం సమస్య ఉంటే — 2 నొక్కండి"
+"తీవ్రమైన సమస్య ఉంటే — 3 నొక్కండి"
+
+[Farmer presses key → logged as pulse report]
+[If 2 or 3 → dealer brief + rep visit triggered automatically]
+
+━━━━━━━━━━━━━━━━━━━━━━━
+★ PANIC MODE: Stabilization script — NO product mention
+★ IVR USED BECAUSE: Works on any phone, no WhatsApp needed
+★ RESPONSE CAPTURE: Keypress logged → territory score updated`,
+
+  farmer_hindi_stable:`📱 CHANNEL: WhatsApp Message
+━━━━━━━━━━━━━━━━━━━━━━━
+Sent to: Sunita Devi Ji (+91-9765XXXXXX)
+Delivery: WhatsApp · Hindi · 09:00 AM
+Trust level: Warm · Season touchpoint 2/12
+━━━━━━━━━━━━━━━━━━━━━━━
+
+नमस्ते Sunita Devi Ji 🙏
+
+तुर दाल अभी flowering stage में है — यह बहुत महत्वपूर्ण समय होता है।
+
+एक छोटी सी बात बताना चाहते हैं जो इस हफ्ते बिदर के किसान कर रहे हैं...
+
+फलियाँ बनने से पहले पौधों की जड़ों के पास एक नज़र डालें। कुछ असामान्य दिखे तो बताएं।
+
+आपकी फसल अच्छी हो 🌾
+
+━━━━━━━━━━━━━━━━━━━━━━━
+★ OPEN LOOP HOOK: "एक बात बताना चाहते हैं..." creates curiosity
+★ CARE-FIRST: No product mention — 2nd touchpoint, trust still building
+★ RESPONSE TRIGGER: If she replies → support routed through dealer`,
+
+  farmer_tamil_stable:`📱 CHANNEL: WhatsApp Message
+━━━━━━━━━━━━━━━━━━━━━━━
+Sent to: Murugesan (+91-9944XXXXXX)
+Delivery: WhatsApp · Tamil · 07:30 AM
+Trust level: Cold · Season touchpoint 1/12
+━━━━━━━━━━━━━━━━━━━━━━━
+
+வணக்கம் 🙏
+
+தஞ்சாவூர் மாவட்டத்தில் இந்த வாரம் நெல் விவசாயிகளுக்கு ஒரு முக்கியமான தகவல் உள்ளது.
+
+தற்போது கதிர் நிரப்பும் நிலையில் உள்ள பயிர்களில் கவனிக்க வேண்டிய ஒன்று இருக்கிறது.
+
+உங்கள் பயிர் நலமாக இருக்கிறதா என்று தெரிந்துகொள்ள விரும்புகிறோம்.
+
+நன்றி 🌾
+
+━━━━━━━━━━━━━━━━━━━━━━━
+★ COLD TRUST: Very gentle first contact — pure care, zero product
+★ NO NAME USED: First interaction, name not yet confirmed
+★ CHANNEL: WhatsApp chosen — smartphone detected in CRM`,
+
+  farmer_sms_feature:`📱 CHANNEL: SMS (Feature Phone)
+━━━━━━━━━━━━━━━━━━━━━━━
+Sent to: Ramu (+91-9312XXXXXX)
+Delivery: MSG91 SMS · Hindi · Works on any basic phone
+Characters: 158/160 · Single SMS
+━━━━━━━━━━━━━━━━━━━━━━━
+
+[SMS TEXT — compressed for 160 chars]
+
+नमस्ते। VAANI कृषि सेवा। आपके क्षेत्र में इस हफ्ते कपास पर ध्यान दें। कोई समस्या हो तो 1800-XXX-XXXX पर मिस्ड कॉल दें। निशुल्क।
+
+━━━━━━━━━━━━━━━━━━━━━━━
+★ FEATURE PHONE: SMS chosen — no WhatsApp detected
+★ MISSED CALL: Zero-cost response mechanism for rural India
+★ TOLL FREE: 1800 number so farmer pays nothing to respond`,
+
+  panic_telugu_dealer:`🌾 నమస్కారం!
+
+ముఖ్యమైన విషయం చెప్పాలి — కృష్ణా జిల్లాలో చాలా ఆందోళన వ్యాపిస్తోంది ఈ వారం. కొంత మంది వాట్సాప్‌లో అతిశయోక్తులు చేస్తున్నారు.
+
+నిజమైన చిత్రం ఏమిటంటే:
+→ సమస్య 3 మండలాలలో మాత్రమే ఉంది
+→ మిగిలిన ప్రాంతాలు సురక్షితంగా ఉన్నాయి
+→ టిల్లరింగ్ దశలో ఉన్న పంటలకు ప్రమాదం ఎక్కువ
+
+రైతులు భయంతో వచ్చినప్పుడు చెప్పండి:
+"మీ ప్లాట్ ఏ మండలంలో ఉంది చూద్దాం — నిజంగా ప్రమాదమో లేదో చెప్తాను."
+
+ముందు వారిని calm చేయండి. అవసరమైతే మాత్రమే Actara 25WG సూచించండి.
+
+— VAANI Intelligence · Mode: Stabilizing 🟡`,
+
+  stable_champion_hindi:`दोस्तों 🙏
+
+अरे यार, सुनो... मेरी सोयाबीन में गर्डल बीटल आई थी पिछले हफ्ते। मैं पहले सोच रहा था wait करूं — पर डीलर ने बोला जल्दी करो।
+
+Amistar 250 SC लगाया। सच में — 3 दिन में फर्क दिखा। 3 दिन में!
+
+अब देख रहा हूं आस-पास के खेतों में भी वही symptom है। Vegetative stage में है ना? बस ध्यान रखो।
+
+अरे हां — पहले एक बार खुद देखो। अगर पत्ते के नीचे छेद दिख रहे हों तो तुरंत जाओ डीलर के पास।
+
+मैं तो बस share कर रहा था भाई। काम आए तो अच्छा है। 🌾
+
+— रामलाल जी (Krishi Mitra ⭐ Indore)`,
+
+  memory_vaani_telugu:`నమస్కారం Ramaiah Garu 🙏
+
+గత నెల మీరు చెప్పారు కదా — తూర్పు పొలంలో వర్షం తర్వాత పసుపు రంగు వస్తోందని. అది తగ్గిందా ఇప్పుడు?
+
+ఈ వారం మళ్ళీ అదే రకమైన వర్షం వస్తుందని అంటున్నారు forecast లో. అందుకే గుర్తుచేద్దామని...
+
+మీ పంట టిల్లరింగ్ దశలో ఉంది కదా — ఇప్పుడు కొంచెం జాగ్రత్తగా ఉండాలి.
+
+ఏమైనా చూసినట్టు అనిపిస్తే చెప్పండి. Srinivas Agro దగ్గర సరైన product ఉంటుంది.
+
+మీకు మంచి పంట కోసం మంచి కోరుకుంటున్నాం. 🌾`,
+
+  panic_hindi_rep:`📋 VISIT CONTEXT — Krishna District
+━━━━━━━━━━━━━━━━━━━
+★ DISTRICT MODE: PANIC ⚠
+★ YOUR OPENING IS DIFFERENT TODAY
+━━━━━━━━━━━━━━━━━━━
+
+OPENING LINE (say this first, before anything else):
+"Main jaanta hoon is hafte bahut tension chal rahi hai area mein. Aao pehle sahi tasveer samajhte hain — actually kya ho raha hai."
+
+WHY THIS MATTERS:
+A farmer in panic mode cannot absorb a product pitch.
+Stabilize first. Product comes after.
+
+HONEST SITUATION BRIEF:
+→ Brown Planthopper confirmed in 3 mandals (not whole district)
+→ Farmers in other areas: show them how to check
+→ If their plot is NOT in affected zone: reassure clearly
+→ If it IS: then — and only then — recommend Actara 25WG
+
+TALKING POINTS:
+• "Check underside of leaves — hoppers are visible"
+• "Tillering stage is vulnerable — 4-day window to act"
+• "Spray before Friday rain for best results"
+
+MEMORY: Last visit — Ramaiah ji mentioned east plot yellowing.
+Ask about that first. Shows you remember.
+━━━━━━━━━━━━━━━━━━━
+VAANI V3 Field Intelligence`,
+
+  stable_telugu_dealer:`🌾 నమస్కారం! నేటి VAANI intel:
+
+కృష్ణా జిల్లా ఈ వారం stable గా ఉంది — పెద్ద ప్రమాదం ఏమీ లేదు.
+
+Paddy tillering దశలో ఉంది. Preventive spray చేయడానికి మంచి timing ఇది.
+
+✅ Recommend చేయండి: Score 250 EC (fungicide)
+📦 Stock check: Actara + Amistar levels చూడండి
+
+ఈ వారం రైతులు వచ్చినప్పుడు preventive treatment గురించి చెప్పండి.
+Emergency కాదు — కానీ proactive గా ఉంటే better.
+
+— VAANI Intelligence · Mode: Stable 🟢`,
+
+  elder_hindi:`[IVR Voice Message — Village Elder Persona]
+
+...
+
+सुनो बच्चों।
+
+इस मौसम में... ऐसा कई साल बाद हो रहा है।
+2015 में भी ऐसा था।
+तब भी डर था। पर फसल बची थी।
+
+घबराओ मत।
+
+जो खेत वाकई प्रभावित हैं — उनको इलाज की ज़रूरत है।
+जो नहीं हैं — उनको सिर्फ ध्यान रखने की।
+
+ये जानना ज़रूरी है कि तुम्हारा खेत किस zone में है।
+अपने डीलर से पूछो — वो बताएगा।
+
+...
+
+ध्यान रखो। सबकी फसल अच्छी हो। 🙏`
+};
+
+// ─── CONTENT LIBRARY ─────────────────────────────────────────────────────────
+// Primary key: voice tier → Secondary: mode → Tertiary: language
+// Every combination has real content. No placeholders.
+
+function getProduct(crop){
+  const map={Paddy:'Actara 25WG',Cotton:'Ampligo 150 ZC',Wheat:'Tilt 250 EC',Soybean:'Amistar 250 SC',Grapes:'Ridomil Gold MZ'};
+  return map[crop]||'Actara 25WG';
+}
+
+function getProduct2(crop){
+  const map={Paddy:'Engeo Pleno',Cotton:'Karate Zeon',Wheat:'Folicur 430 SC',Soybean:'Actara 25WG',Grapes:'Score 250 EC'};
+  return map[crop]||'Engeo Pleno';
+}
+
+function getPest(crop){
+  const map={Paddy:'Brown Planthopper',Cotton:'Pink Bollworm',Wheat:'Yellow Rust',Soybean:'Girdle Beetle',Grapes:'Downy Mildew'};
+  return map[crop]||'pest pressure';
+}
+
+function buildContent(voice, mode, lang, crop, stage, district, memory){
+  const d = district.split(',')[0].trim();
+  const prod = getProduct(crop);
+  const prod2 = getProduct2(crop);
+  const pest = getPest(crop);
+
+  // ── DEALER CONTENT ────────────────────────────────────────────────────────
+  if(voice==='dealer'){
+    const dealerContent = {
+      panic:{
+        Telugu:`🌾 నమస్కారం!
+
+${d} జిల్లాలో చాలా ఆందోళన వ్యాపిస్తోంది ఈ వారం.
+
+ముందు రైతులను calm చేయండి — ఆపై సహాయం చేయండి:
+
+→ సమస్య అందరి పొలాల్లో లేదు — కొన్ని మండలాల్లో మాత్రమే
+→ ${crop} (${stage} దశ) లో ${pest} నిర్ధారించబడింది
+→ రైతు వస్తే ముందు అతని ప్లాట్ ఎక్కడ ఉందో అడగండి
+
+✅ అవసరమైతే మాత్రమే: ${prod}
+⏰ విండో: 4 రోజులు మాత్రమే
+📦 స్టాక్: ఈ రోజే చెక్ చేయండి — డిమాండ్ పెరుగుతోంది
+
+భయంతో వచ్చిన రైతుకు నిజం చెప్పండి — అది మీపై నమ్మకం పెంచుతుంది.
+
+— VAANI Intelligence · Mode: Stabilizing 🔴`,
+
+        Hindi:`🌾 नमस्ते!
+
+${d} जिले में इस हफ्ते बहुत घबराहट फैल रही है।
+
+किसान आएं तो पहले शांत करें — फिर मदद करें:
+
+→ समस्या सभी खेतों में नहीं है — कुछ मंडलों में ही है
+→ ${crop} (${stage}) में ${pest} की पुष्टि हुई है
+→ किसान से पूछें उनका खेत कहाँ है — फिर सलाह दें
+
+✅ जरूरत हो तो ही: ${prod}
+⏰ समय: 4 दिन बाकी
+📦 स्टॉक: आज ही जाँचें — माँग बढ़ रही है
+
+डरे हुए किसान को सच बताएं — इससे आपकी दुकान पर भरोसा बढ़ेगा।
+
+— VAANI Intelligence · Mode: Stabilizing 🔴`,
+
+        Marathi:`🌾 नमस्कार!
+
+${d} जिल्ह्यात या आठवड्यात खूप घबराट पसरली आहे.
+
+शेतकरी आले तर आधी शांत करा — मग मदत करा:
+
+→ समस्या सगळ्या शेतांत नाही — काही मंडलांत आहे
+→ ${crop} (${stage}) मध्ये ${pest} आढळला आहे
+→ शेतकऱ्याचे शेत कुठे आहे ते विचारा — मग सल्ला द्या
+
+✅ गरज असेल तरच: ${prod}
+⏰ वेळ: 4 दिवस उरले
+📦 साठा: आजच तपासा — मागणी वाढत आहे
+
+— VAANI Intelligence · Mode: Stabilizing 🔴`,
+
+        Tamil:`🌾 வணக்கம்!
+
+${d} மாவட்டத்தில் இந்த வாரம் பயம் பரவுகிறது.
+
+விவசாயி வந்தால் முதலில் அமைதிப்படுத்துங்கள்:
+
+→ பிரச்சனை எல்லா வயல்களிலும் இல்லை — சில மண்டலங்களில் மட்டுமே
+→ ${crop} (${stage}) பயிரில் ${pest} உறுதிப்படுத்தப்பட்டது
+→ விவசாயியின் வயல் எந்த பகுதியில் என்று கேளுங்கள்
+
+✅ தேவைப்பட்டால் மட்டும்: ${prod}
+⏰ நேரம்: 4 நாட்கள் மட்டுமே
+📦 இருப்பு இன்றே சரிபார்க்கவும்
+
+— VAANI Intelligence · Mode: Stabilizing 🔴`,
+
+        English:`🌾 Good Morning!
+
+HIGH ALERT — ${d} District in panic mode this week.
+
+When farmers arrive at your shop — STABILIZE FIRST:
+
+→ Problem is NOT district-wide — confirmed in 3 mandals only
+→ ${crop} at ${stage} stage — ${pest} detected
+→ Ask which area their plot is in before recommending anything
+
+✅ Recommend only if genuinely needed: ${prod}
+⏰ Spray window: 4 days remaining
+📦 Stock check urgently — demand spike incoming (+300% above weekly avg)
+
+A farmer who is panicking cannot make a good decision.
+Calm them first. The product recommendation lands better after.
+
+— VAANI Intelligence · Mode: Stabilizing 🔴`
+      },
+
+      stable:{
+        Telugu:`🌾 నమస్కారం! నేటి VAANI intel:
+
+${d} జిల్లా ఈ వారం stable గా ఉంది — పెద్ద ప్రమాదం లేదు.
+
+${crop} పంట ${stage} దశలో ఉంది — preventive treatment కి మంచి timing.
+
+📊 ఈ వారం అంచనా:
+→ ${pest} risk: Moderate — preventive dose recommended
+→ వర్షం forecast: గురువారం — spray deadline: బుధవారం రాత్రి
+→ Demand spike: రెండు వారాల్లో expect చేయండి
+
+✅ Recommend చేయండి: ${prod}
+✅ Alternative: ${prod2}
+📦 Stock: ఈ వారం order చేయండి — next week demand పెరుగుతుంది
+
+రైతులు preventive spray గురించి అడిగినప్పుడు: ${stage} దశలో ఇది perfect timing అని చెప్పండి.
+
+— VAANI Intelligence · Mode: Stable 🟢`,
+
+        Hindi:`🌾 नमस्ते! आज की VAANI intel:
+
+${d} जिला इस हफ्ते stable है — कोई बड़ा खतरा नहीं।
+
+${crop} फसल ${stage} अवस्था में है — preventive treatment का सही समय।
+
+📊 इस हफ्ते अनुमान:
+→ ${pest} risk: Moderate — preventive dose सही रहेगा
+→ बारिश: गुरुवार को — spray deadline: बुधवार शाम तक
+→ Demand: अगले दो हफ्ते में बढ़ेगी
+
+✅ Recommend करें: ${prod}
+✅ Alternative: ${prod2}
+📦 Stock: इस हफ्ते order करें — अगले हफ्ते माँग बढ़ेगी
+
+किसान preventive spray के बारे में पूछें तो बताएं: ${stage} अवस्था में यह सही timing है।
+
+— VAANI Intelligence · Mode: Stable 🟢`,
+
+        Marathi:`🌾 नमस्कार! आजची VAANI intel:
+
+${d} जिल्हा या आठवड्यात stable आहे — मोठा धोका नाही.
+
+${crop} पीक ${stage} अवस्थेत आहे — preventive treatment ची योग्य वेळ.
+
+📊 या आठवड्याचा अंदाज:
+→ ${pest} risk: Moderate — preventive dose योग्य
+→ पाऊस: गुरुवारी — spray deadline: बुधवारी संध्याकाळ
+→ Demand: पुढच्या दोन आठवड्यात वाढेल
+
+✅ Recommend करा: ${prod}
+✅ Alternative: ${prod2}
+📦 Stock: या आठवड्यात order करा
+
+— VAANI Intelligence · Mode: Stable 🟢`,
+
+        Tamil:`🌾 வணக்கம்! இன்றைய VAANI intel:
+
+${d} மாவட்டம் இந்த வாரம் stable — பெரிய ஆபத்து இல்லை.
+
+${crop} பயிர் ${stage} நிலையில் உள்ளது — preventive treatment நல்ல நேரம்.
+
+📊 இந்த வார அந்தாஜு:
+→ ${pest} risk: Moderate — preventive dose பரிந்துரை
+→ மழை: வியாழக்கிழமை — spray deadline: புதன்கிழமை மாலை
+→ Demand: அடுத்த இரண்டு வாரங்களில் அதிகரிக்கும்
+
+✅ பரிந்துரை: ${prod}
+✅ Alternative: ${prod2}
+📦 Stock: இந்த வாரம் order செய்யுங்கள்
+
+— VAANI Intelligence · Mode: Stable 🟢`,
+
+        English:`🌾 Good Morning! Today's VAANI intel:
+
+${d} District is STABLE this week — no major threats.
+
+${crop} at ${stage} stage — good window for preventive treatment.
+
+📊 Weekly Forecast:
+→ ${pest} risk: Moderate — preventive dose recommended
+→ Rain forecast: Thursday — spray deadline: Wednesday evening
+→ Demand spike expected: within 2 weeks
+
+✅ Recommend: ${prod}
+✅ Alternative: ${prod2}
+📦 Stock now: Order this week before demand peaks
+
+When farmers ask about preventive spray — tell them ${stage} stage is the perfect timing. Don't wait for visible damage.
+
+— VAANI Intelligence · Mode: Stable 🟢`
+      },
+
+      recover:{
+        Telugu:`🌾 నమస్కారం!
+
+${d} లో పరిస్థితి మెల్లగా మెరుగవుతోంది. రైతులు ఇప్పుడు recovery గురించి అడుగుతారు.
+
+📋 Recovery రైతులకు చెప్పండి:
+→ ${stage} దశలో recovery ఇంకా సాధ్యం
+→ Spray window: మరో 5 రోజులు ఉంది
+→ 40-60% damage అయిన పంటలు కూడా recover అవుతాయి
+
+✅ Recovery treatment: ${prod}
+✅ Supportive: ${prod2}
+💬 Message: "నష్టం అయింది — కానీ పంట పూర్తిగా పోలేదు. ఇప్పుడు action తీసుకుంటే recover అవుతుంది."
+
+రైతుకు hope ఇవ్వండి — realistic గా. Panic కాదు, action అవసరం.
+
+— VAANI Intelligence · Mode: Recovering 🟡`,
+
+        Hindi:`🌾 नमस्ते!
+
+${d} में हालात धीरे-धीरे ठीक हो रहे हैं। किसान अब recovery के बारे में पूछेंगे।
+
+📋 Recovery किसानों को बताएं:
+→ ${stage} अवस्था में recovery अभी भी संभव है
+→ Spray window: 5 दिन और बाकी हैं
+→ 40-60% damaged फसल भी recover हो सकती है
+
+✅ Recovery treatment: ${prod}
+✅ Supportive: ${prod2}
+💬 Message: "नुकसान हुआ — लेकिन फसल पूरी तरह नहीं गई। अभी action लें।"
+
+— VAANI Intelligence · Mode: Recovering 🟡`,
+
+        English:`🌾 Good Morning!
+
+${d} situation is slowly improving. Farmers will now ask about recovery options.
+
+📋 For farmers with damaged ${crop}:
+→ Recovery still possible at ${stage} stage
+→ Spray window: 5 more days
+→ Even 40-60% damaged crops can recover with right treatment
+
+✅ Recovery: ${prod}
+✅ Supportive: ${prod2}
+💬 Message: "Damage happened — but the crop is not lost. Act now."
+
+Give farmers realistic hope. Not panic, not false confidence — actionable direction.
+
+— VAANI Intelligence · Mode: Recovering 🟡`,
+
+        Marathi:`🌾 नमस्कार! ${d} मध्ये परिस्थिती हळूहळू सुधारत आहे.\n\n✅ Recovery: ${prod}\n✅ Supportive: ${prod2}\n\nशेतकऱ्यांना सांगा: ${stage} अवस्थेत recovery अजून शक्य आहे — आत्ता action घ्या.\n\n— VAANI Intelligence · Mode: Recovering 🟡`,
+        Tamil:`🌾 வணக்கம்! ${d} நிலைமை படிப்படியாக சுதாரிக்கிறது.\n\n✅ Recovery: ${prod}\n✅ Supportive: ${prod2}\n\nவிவசாயிகளிடம் சொல்லுங்கள்: ${stage} நிலையில் recovery இன்னும் சாத்தியம் — இப்போதே நடவடிக்கை எடுங்கள்.\n\n— VAANI Intelligence · Mode: Recovering 🟡`
+      },
+
+      confident:{
+        Telugu:`🌾 నమస్కారం! Good news:
+
+${d} జిల్లా ఈ సీజన్ చాలా బాగుంది — రైతులు confident గా ఉన్నారు.
+
+📈 Season performance:
+→ ${crop} yield: District average కంటే 15% better
+→ ${pest} incidents: Previous season కంటే 40% తక్కువ
+→ Farmer satisfaction: High
+
+🔮 Next steps:
+→ Post-harvest products: ready చేయండి
+→ Next season: early booking opportunity
+
+✅ Next season recommend: ${prod}
+📦 Pre-season stock: ఇప్పుడే order చేయండి — discount window open
+
+— VAANI Intelligence · Mode: Confident 🔵`,
+
+        Hindi:`🌾 नमस्ते! अच्छी खबर:\n\n${d} में इस सीजन बढ़िया रहा।\n\n📈 Season performance:\n→ ${crop} yield: District average से 15% बेहतर\n→ ${pest}: पिछले सीजन से 40% कम\n\n✅ Next season recommend: ${prod}\n📦 Pre-season stock: अभी order करें\n\n— VAANI Intelligence · Mode: Confident 🔵`,
+
+        English:`🌾 Great news!\n\n${d} had an excellent season. Farmer confidence is high.\n\n📈 Season highlights:\n→ ${crop} yield: 15% above district average\n→ ${pest} incidents: 40% lower than last season\n\n✅ Next season: ${prod} early booking\n📦 Pre-season stock open now\n\n— VAANI Intelligence · Mode: Confident 🔵`,
+
+        Marathi:`🌾 नमस्कार! चांगली बातमी:\n\n${d} मध्ये या हंगामात चांगले झाले.\n\n✅ Next season: ${prod}\n📦 Pre-season stock आत्ताच order करा\n\n— VAANI Intelligence · Mode: Confident 🔵`,
+        Tamil:`🌾 வணக்கம்! நல்ல செய்தி:\n\n${d} மாவட்டத்தில் இந்த சீசன் சிறப்பாக இருந்தது.\n\n✅ Next season: ${prod}\n📦 Pre-season stock இப்போதே order செய்யுங்கள்\n\n— VAANI Intelligence · Mode: Confident 🔵`
+      }
+    };
+    const modeObj = dealerContent[mode]||dealerContent.stable;
+    return modeObj[lang]||modeObj.English;
+  }
+
+  // ── REP CONTENT ───────────────────────────────────────────────────────────
+  if(voice==='rep'){
+    const repContent = {
+      panic:`📋 VISIT CONTEXT — ${d} District
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+★ DISTRICT MODE: PANIC ⚠
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Crop: ${crop} | Stage: ${stage}
+Active Threat: ${pest}
+Territory Score: CRITICAL
+
+★ CHANGE YOUR OPENING TODAY:
+Do NOT lead with the product. Do NOT mention prices.
+Open with: "Main jaanta hoon is hafte bahut tension chal rahi hai.
+Pehle honest tasveer batata hoon — kya ho raha hai actually."
+
+WHY: A panicking farmer cannot receive a product pitch.
+Stabilize first. Trust second. Product third.
+
+HONEST BRIEF FOR FARMERS:
+→ ${pest} confirmed in 3 mandals — not whole district
+→ ${crop} at ${stage} = higher vulnerability, but manageable
+→ Show them HOW to check their specific plot
+
+IF THEY ARE IN AFFECTED ZONE:
+→ Recommend ${prod} immediately
+→ Spray window: 4 days (before Friday rain)
+→ Dose: 200ml/acre at ${stage} stage
+
+IF NOT IN AFFECTED ZONE:
+→ Reassure clearly: "Aapka plot safe zone mein hai"
+→ Preventive dose only — don't oversell
+${memory==='trusted'?'\n★ MEMORY: Last visit — farmer mentioned east plot issue.\nAsk about that first. Shows you remember.\n':memory==='warm'?'\n★ MEMORY: One prior interaction. Reference it briefly.\n':''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+VAANI V3 Field Intelligence`,
+
+      stable:`📋 VISIT CONTEXT — ${d} District
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+★ DISTRICT MODE: STABLE 🟢
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Crop: ${crop} | Stage: ${stage}
+Threat: ${pest} | Score: MEDIUM
+
+WHY THIS VISIT IS PRIORITIZED:
+[1] 🌾 ${crop} at ${stage} — critical spray window
+[2] 📦 Retailer stock running low — reorder needed
+[3] 📅 Routine territory coverage
+[4] 💰 Pre-season opportunity — stock discussion
+
+RECOMMEND TODAY:
+→ Primary: ${prod}
+→ Key message: "${stage} is the optimal application window.
+   Waiting costs 20% efficacy."
+→ Alternative: ${prod2}
+
+TALKING POINTS:
+• ${pest} risk is moderate — preventive dose smart move
+• Rain forecast Thursday — spray by Wednesday
+• ${prod} vs competitor: systemic action + residual protection
+• Suggest farmers check underside of leaves weekly
+${memory==='trusted'?'\n★ MEMORY: Trusted relationship — ask about last season outcome.\nReference their past success with ${prod}.\n':memory==='warm'?'\n★ MEMORY: Warm — they mentioned ${pest} concern last time.\nFollow up on that.\n':''}
+AGRONOMIC TIP:
+At ${stage} stage — look for early ${pest} signs at base of plant.
+Early detection = 80% less product needed.
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+VAANI V3 Field Intelligence`,
+
+      recover:`📋 VISIT CONTEXT — ${d} District
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+★ DISTRICT MODE: RECOVERING 🟡
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Crop: ${crop} | Stage: ${stage}
+Situation: Post-damage recovery phase
+
+YOUR TONE TODAY: Empathetic + Practical
+Farmers have had a hard week. Acknowledge it before solutions.
+
+OPEN WITH: "Pata hai is hafte mushkil raha.
+Dekho — kya abhi bhi bacha ja sakta hai."
+
+RECOVERY ASSESSMENT:
+→ If damage < 40%: Full recovery possible with ${prod}
+→ If damage 40-70%: Partial recovery — manage expectations
+→ If damage > 70%: Focus on protecting rest of season
+
+RECOVERY PROTOCOL:
+[1] Drain waterlogged areas immediately
+[2] Apply ${prod} within 48 hours
+[3] Follow with ${prod2} after 7 days
+[4] Re-check in 5 days — log outcome
+${memory==='trusted'?'\n★ MEMORY: This farmer was worried last month too.\nThey trust you — give them honest assessment.\n':''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+VAANI V3 Field Intelligence`,
+
+      confident:`📋 VISIT CONTEXT — ${d} District
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+★ DISTRICT MODE: CONFIDENT 🔵
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Crop: ${crop} | Stage: ${stage}
+Season performing well above average
+
+TONE: Celebratory + Forward-looking
+
+KEY OPPORTUNITIES TODAY:
+[1] Harvest timing advice — builds deep trust
+[2] Post-harvest product discussion
+[3] Next season early booking conversation
+[4] Champion farmer identification for V3 network
+
+DISCUSS: Mandi timing
+→ Prices trending up this week
+→ Optimal sell window: second week of month
+→ Rain forecast: avoid post-harvest storage in open
+
+NEXT SEASON SETUP:
+→ Recommend ${prod} for pre-season booking
+→ Offer early-bird pricing discussion
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+VAANI V3 Field Intelligence`
+    };
+    return repContent[mode]||repContent.stable;
+  }
+
+  // ── CHAMPION CONTENT ──────────────────────────────────────────────────────
+  if(voice==='champion'){
+    const champContent = {
+      panic:{
+        Telugu:`మిత్రులారా 🙏
+
+ఈ వారం చాలా గందరగోళంగా ఉంది మన జిల్లాలో. WhatsApp లో చాలా వార్తలు వస్తున్నాయి.
+
+నేను నా పొలంలో చూసినది మీకు చెప్పాలని అనిపించింది:
+
+నా పొలంలో ${pest} వచ్చింది — ఆదివారం గమనించాను. అదే రోజు ${prod} వేశాను. మంగళవారానికి తేడా కనిపించింది.
+
+అందరూ panic అవ్వకండి. మీ పొలం ఏ మండలంలో ఉందో చూడండి ముందు.
+
+నేను ఒక్కటి చెప్తాను — నా పొలంలో పని చేసింది. మీకు కూడా పని చేస్తుందని ఆశిస్తున్నాను 🌾
+
+— Venkatesh, Krishi Mitra ⭐ (Kalidindi)`,
+
+        Hindi:`दोस्तों 🙏
+
+इस हफ्ते जिले में बहुत घबराहट है। WhatsApp पर बहुत कुछ आ रहा है।
+
+मैं बस अपनी बात share करना चाहता था:
+
+मेरे खेत में ${pest} आई थी — रविवार को दिखी। उसी दिन ${prod} लगाया। मंगलवार तक फर्क दिखा।
+
+सब घबराओ मत। पहले देखो तुम्हारा खेत किस area में है।
+
+मेरे खेत में काम किया — उम्मीद है तुम्हारे भी काम आए 🌾
+
+— रामलाल जी, Krishi Mitra ⭐`,
+
+        English:`Friends 🙏\n\nLot of panic this week. Before you react — hear me out.\n\nI saw ${pest} in my ${crop} on Sunday. Applied ${prod} same day. By Tuesday, visible improvement.\n\nDon't panic. First check which mandal your plot is in.\n\nIt worked on my farm — hope it helps yours too 🌾\n\n— Venkatesh, Krishi Mitra ⭐`,
+        Marathi:`मित्रांनो 🙏\n\nया आठवड्यात खूप घबराट आहे. पण आधी बघा तुमचे शेत कुठे आहे ते.\n\nमाझ्या ${crop} मध्ये ${pest} आला होता — ${prod} लावला, 2 दिवसात फरक दिसला.\n\nउम्मीद आहे तुम्हालाही उपयोग होईल 🌾\n\n— Krishi Mitra ⭐`,
+        Tamil:`நண்பர்களே 🙏\n\nஇந்த வாரம் மிகவும் பதட்டமாக இருக்கிறது. ஆனால் முதலில் உங்கள் வயல் எந்த பகுதியில் என்று பாருங்கள்.\n\nஎன் ${crop} வயலில் ${pest} வந்தது — ${prod} போட்டேன், 2 நாட்களில் மாற்றம் தெரிந்தது.\n\n🌾 — Krishi Mitra ⭐`
+      },
+      stable:{
+        Telugu:`మిత్రులారా 🙏
+
+నా ${crop} పంట గురించి ఒక విషయం share చేయాలని అనిపించింది.
+
+ఈ సీజన్ ${stage} దశలో ఒక్కసారి ${prod} వేశాను — మంచి ఫలితం వచ్చింది. నా పక్కింటి రైతు Ravi కూడా వేశాడు, వాడికి కూడా పని చేసింది.
+
+${stage} దశలో ఉన్న మీ పంట ఒక్కసారి check చేయండి. ఆకుల అడుగు భాగం చూడండి.
+
+అవసరమైతే మీ dealer దగ్గర ${prod} అడగండి. ఈ వారం వెళ్ళండి — late అయితే window మిస్ అవుతుంది.
+
+కాదంటే wait చేయండి, వర్షం తర్వాత చూద్దాం అనిపిస్తే — అది కూడా సరే. మీ పొలం మీకు తెలుసు.
+
+మీకు మంచి పంట కోసం 🌾
+
+— Venkatesh, Krishi Mitra ⭐`,
+
+        Hindi:`दोस्तों 🙏
+
+अरे यार — मेरी ${crop} फसल की बात बताता हूँ।
+
+इस ${stage} में ${prod} लगाया था — सच में 3 दिन में फर्क दिखा। 3 दिन में!
+
+पहले सोच रहा था wait करूं। पर dealer ने बोला अभी सही time है। सही बोला उसने।
+
+तुम भी एक बार ध्यान से देखो — पत्ते के नीचे। कुछ असामान्य लगे तो dealer के पास जाओ।
+
+अरे हाँ — पहले खुद देखो। अगर ठीक लगे तो कोई जरूरी नहीं। मैं तो बस share कर रहा था भाई 🌾
+
+— रामलाल जी, Krishi Mitra ⭐ (Indore)`,
+
+        Marathi:`मित्रांनो 🙏\n\nमाझ्या ${crop} बद्दल एक गोष्ट सांगायची होती.\n\n${stage} मध्ये ${prod} लावला — 3 दिवसात फरक दिसला!\n\nतुम्हीही एकदा पाने खालून बघा. काही असामान्य दिसले तर dealer कडे जा.\n\nनाही तर थांबा — तुमचे शेत तुम्हाला माहीत आहे 🌾\n\n— Krishi Mitra ⭐`,
+
+        Tamil:`நண்பர்களே 🙏\n\nஎன் ${crop} பயிரைப் பற்றி ஒரு விஷயம் சொல்ல விரும்புகிறேன்.\n\n${stage} நிலையில் ${prod} போட்டேன் — 3 நாட்களில் வித்தியாசம் தெரிந்தது!\n\nநீங்களும் இலைகளின் அடியைப் பாருங்கள். ஏதாவது தெரிந்தால் dealer-இடம் போங்கள் 🌾\n\n— Krishi Mitra ⭐`,
+
+        English:`Friends 🙏\n\nWanted to share something about my ${crop} this season.\n\nApplied ${prod} during ${stage} stage. Visible difference in 3 days — honestly didn't expect it that fast.\n\nCheck your plants — look at undersides of leaves. Something unusual, go to your dealer this week.\n\nOr wait and see — you know your farm better than anyone 🌾\n\n— Venkatesh, Krishi Mitra ⭐`
+      },
+      recover:{
+        Telugu:`మిత్రులారా 🙏\n\nఈ వారం కష్టంగా ఉంది చాలా మందికి. నాకు కూడా నష్టం జరిగింది.\n\nకానీ — పంట పూర్తిగా పోలేదు. Recovery possible అని dealer చెప్పాడు.\n\n${prod} వేశాను. ఫలితం చూస్తున్నాను. మీకు కూడా try చేయమని చెప్తున్నాను.\n\nధైర్యంగా ఉండండి 🌾\n\n— Krishi Mitra ⭐`,
+        Hindi:`दोस्तों 🙏\n\nइस हफ्ते मुश्किल रहा। मुझे भी नुकसान हुआ।\n\nपर — फसल पूरी नहीं गई। Recovery अभी भी हो सकती है।\n\n${prod} लगाया है। देख रहा हूँ। तुम भी try करो।\n\nहिम्मत रखो 🌾\n\n— Krishi Mitra ⭐`,
+        English:`Friends 🙏\n\nTough week for all of us. I took damage too.\n\nBut the crop isn't lost. Recovery is still possible — dealer confirmed.\n\nApplied ${prod}. Watching results. Try it.\n\nStay strong 🌾\n\n— Krishi Mitra ⭐`,
+        Marathi:`मित्रांनो 🙏\n\nकठीण आठवडा होता. माझेही नुकसान झाले.\n\nपण पीक पूर्णपणे गेले नाही — recovery शक्य आहे.\n\n${prod} लावले आहे. तुम्हीही try करा. धीर धरा 🌾\n\n— Krishi Mitra ⭐`,
+        Tamil:`நண்பர்களே 🙏\n\nகஷ்டமான வாரம். எனக்கும் சேதம் ஆனது.\n\nஆனால் பயிர் முழுவதும் போகவில்லை — recovery சாத்தியம்.\n\n${prod} போட்டேன். நீங்களும் try செய்யுங்கள். தைரியமாக இருங்கள் 🌾\n\n— Krishi Mitra ⭐`
+      },
+      confident:{
+        Telugu:`మిత్రులారా 🙏\n\nఈ సీజన్ మన ${crop} చాలా బాగైంది! అందరికీ congratulations.\n\nNon-product tip: Harvest timing చాలా ముఖ్యం. ఈ వారం ధరలు పెరుగుతున్నాయి — రెండవ వారంలో sell చేయడం better అని నాకు అనిపిస్తోంది.\n\nMandi కి వెళ్ళే ముందు ఒకసారి dealer తో మాట్లాడండి 🌾\n\n— Krishi Mitra ⭐`,
+        Hindi:`दोस्तों 🙏\n\nइस सीजन ${crop} बहुत अच्छा रहा! सबको बधाई।\n\nNon-product tip: Harvest timing बहुत जरूरी है। इस हफ्ते दाम बढ़ रहे हैं — दूसरे हफ्ते में बेचना बेहतर लग रहा है।\n\nMandi जाने से पहले dealer से एक बार बात करो 🌾\n\n— Krishi Mitra ⭐`,
+        English:`Friends 🙏\n\nWhat a season for ${crop}! Congratulations everyone.\n\nNon-product tip: Harvest timing matters a lot. Prices are rising this week — selling in the second week looks better. Talk to your dealer before heading to mandi 🌾\n\n— Krishi Mitra ⭐`,
+        Marathi:`मित्रांनो 🙏\n\nया हंगामात ${crop} खूप चांगले झाले! सर्वांचे अभिनंदन.\n\nHarvest timing महत्वाचे आहे — या आठवड्यात भाव वाढत आहेत. Mandi ला जाण्यापूर्वी dealer शी बोला 🌾\n\n— Krishi Mitra ⭐`,
+        Tamil:`நண்பர்களே 🙏\n\nஇந்த சீசனில் ${crop} சிறப்பாக இருந்தது! எல்லோருக்கும் வாழ்த்துகள்.\n\nHarvest timing முக்கியம் — இந்த வாரம் விலை அதிகரிக்கிறது. Mandi போவதற்கு முன் dealer-இடம் பேசுங்கள் 🌾\n\n— Krishi Mitra ⭐`
+      }
+    };
+    const champMode = champContent[mode]||champContent.stable;
+    return champMode[lang]||champMode.English;
+  }
+
+  // ── VAANI COMPANION CONTENT ───────────────────────────────────────────────
+  if(voice==='vaani'){
+    const memoryIntro = {
+      trusted:{
+        Telugu:`నమస్కారం 🙏\n\nగత నెల మీరు చెప్పారు కదా — తూర్పు పొలంలో వర్షం తర్వాత పసుపు రంగు వస్తోందని. అది తగ్గిందా ఇప్పుడు?\n\nఈ వారం మళ్ళీ అదే రకమైన వర్షం forecast లో ఉంది. అందుకే గుర్తుచేద్దామని...\n\n${d} లో ${crop} ${stage} దశలో ఉంది — ఇప్పుడు కొంచెం జాగ్రత్తగా ఉండాలి.\n\nఏమైనా కనిపిస్తే చెప్పండి. Srinivas Agro దగ్గర ${prod} సిద్ధంగా ఉంటుంది 🌾`,
+        Hindi:`नमस्ते 🙏\n\nपिछले महीने आपने बताया था — बारिश के बाद खेत में पीलापन दिख रहा था। अब कैसा है?\n\nइस हफ्ते फिर वैसी ही बारिश का अनुमान है। इसलिए याद दिलाने आया...\n\n${d} में ${crop} ${stage} अवस्था में है — थोड़ा ध्यान रखें।\n\nकुछ दिखे तो बताएं। dealer के पास ${prod} तैयार होगा 🌾`,
+        English:`Hello 🙏\n\nLast month you mentioned yellowing after the rain in your east plot. Did that settle down?\n\nSame rain pattern is forecast again this week — that's why I wanted to check in.\n\n${d} — ${crop} at ${stage} stage. Worth keeping an eye on.\n\nIf you see anything, let me know. ${prod} is available at your dealer 🌾`,
+        Marathi:`नमस्कार 🙏\n\nमागच्या महिन्यात तुम्ही सांगितले होते — पावसानंतर पिवळेपणा येतोय. आता कसे आहे?\n\nया आठवड्यात परत तसाच पाऊस येण्याचा अंदाज आहे — म्हणून आठवण करून द्यायला आलो.\n\n${d} मध्ये ${crop} ${stage} अवस्थेत आहे. ${prod} dealer कडे तयार आहे 🌾`,
+        Tamil:`வணக்கம் 🙏\n\nகடந்த மாதம் மழைக்குப் பிறகு மஞ்சள் நிறம் வருவதாகச் சொன்னீர்கள். இப்போது எப்படி உள்ளது?\n\nஇந்த வாரம் மீண்டும் அதே மழை முறை வருகிறது — அதனால் கேக்க வந்தேன்.\n\n${d} மாவட்டத்தில் ${crop} ${stage} நிலையில் உள்ளது. ${prod} dealer-இடம் கிடைக்கும் 🌾`
+      },
+      warm:{
+        Telugu:`నమస్కారం 🙏\n\nగత నెల మీరు ${crop} గురించి మాట్లాడారు కదా. ఈ వారం ఒక ముఖ్యమైన విషయం చెప్పాలని అనిపించింది.\n\n${d} లో ${stage} దశలో ఉన్న రైతులు ఒక్కసారి ఆకుల అడుగు భాగం చూస్తున్నారు.\n\nమీకు అవసరమైతే dealer దగ్గర ${prod} ఉంటుంది 🌾`,
+        Hindi:`नमस्ते 🙏\n\nपिछले महीने आपसे ${crop} के बारे में बात हुई थी। इस हफ्ते एक जरूरी बात बताना चाहता था।\n\n${d} में ${stage} अवस्था में किसान पत्ते के नीचे एक बार जाँच कर रहे हैं।\n\nजरूरत हो तो dealer के पास ${prod} है 🌾`,
+        English:`Hello 🙏\n\nWe spoke about your ${crop} last month. Wanted to flag something important this week.\n\n${d} farmers at ${stage} stage are doing a quick underleaf check right now.\n\nIf you need anything — ${prod} is available at your dealer 🌾`,
+        Marathi:`नमस्कार 🙏\n\nमागच्या महिन्यात ${crop} बद्दल बोललो होतो. या आठवड्यात एक महत्वाची गोष्ट सांगायची होती.\n\n${d} मध्ये ${stage} मधील शेतकरी पानांखाली तपासत आहेत. ${prod} dealer कडे आहे 🌾`,
+        Tamil:`வணக்கம் 🙏\n\nகடந்த மாதம் ${crop} பற்றி பேசினோம். இந்த வாரம் ஒரு முக்கியமான விஷயம் சொல்ல விரும்புகிறேன்.\n\n${d} மாவட்டத்தில் ${stage} நிலை விவசாயிகள் இலைகளின் அடியை சரிபார்க்கிறார்கள். ${prod} dealer-இடம் கிடைக்கும் 🌾`
+      },
+      none:{
+        Telugu:`నమస్కారం 🙏\n\n${d} జిల్లాలో ${crop} రైతులకు ఈ వారం ముఖ్యమైన సమాచారం.\n\n${stage} దశ చాలా కీలకమైనది — ఇప్పుడు ఒక్కసారి పొలం చూస్తే better.\n\nఏమైనా అనిపిస్తే మీ dealer తో మాట్లాడండి 🌾`,
+        Hindi:`नमस्ते 🙏\n\n${d} जिले में ${crop} किसानों के लिए इस हफ्ते महत्वपूर्ण जानकारी।\n\n${stage} अवस्था बहुत जरूरी है — एक बार खेत देखें तो बेहतर होगा।\n\nकुछ लगे तो dealer से बात करें 🌾`,
+        English:`Hello 🙏\n\nImportant note for ${crop} farmers in ${d} this week.\n\n${stage} stage is critical — worth checking your field once this week.\n\nIf anything looks off, speak to your dealer 🌾`,
+        Marathi:`नमस्कार 🙏\n\n${d} मध्ये ${crop} शेतकऱ्यांसाठी या आठवड्यात महत्वाची माहिती.\n\n${stage} अवस्था खूप महत्वाची आहे — एकदा शेत पाहणे बरे होईल 🌾`,
+        Tamil:`வணக்கம் 🙏\n\n${d} மாவட்டத்தில் ${crop} விவசாயிகளுக்கு இந்த வாரம் முக்கியமான தகவல்.\n\n${stage} நிலை மிக முக்கியமானது — ஒருமுறை வயலை பார்க்கவும் 🌾`
+      }
+    };
+    const memObj = memoryIntro[memory]||memoryIntro.none;
+    return memObj[lang]||memObj.English;
+  }
+
+  // ── ELDER CONTENT ─────────────────────────────────────────────────────────
+  if(voice==='elder'){
+    const elderContent = {
+      Telugu:`[IVR Voice Message — Village Elder · Telugu · ~45 seconds]
+
+...
+
+వినండి బిడ్డలూ.
+
+ఈ మౌసమ్... చాలా సంవత్సరాల తర్వాత ఇలా వస్తోంది.
+2015 లో కూడా ఇలాగే జరిగింది.
+అప్పుడు కూడా భయం ఉంది. కానీ పంట బతికింది.
+
+తొందర పడకండి.
+
+ఏది నిజంగా సమస్య అనుకుంటున్నారో —
+మీ dealer ని అడగండి. వాడు చెప్తాడు.
+
+...
+
+మీ అందరి పంట మంచిగా ఉండాలని కోరుకుంటున్నాను. 🙏`,
+
+      Hindi:`[IVR Voice Message — Village Elder · Hindi · ~45 seconds]
+
+...
+
+सुनो बच्चों।
+
+यह मौसम... कई सालों के बाद ऐसा आ रहा है।
+2015 में भी ऐसा था।
+तब भी डर था। पर फसल बची थी।
+
+घबराओ मत।
+
+जो खेत वाकई प्रभावित हैं — उनको इलाज की ज़रूरत है।
+जो नहीं हैं — सिर्फ ध्यान रखने की।
+
+अपने dealer से पूछो। वो बताएगा।
+
+...
+
+ध्यान रखो। सबकी फसल अच्छी हो। 🙏`,
+
+      Marathi:`[IVR Voice Message — Village Elder · Marathi · ~45 seconds]
+
+...
+
+ऐका मुलांनो.
+
+हे मौसम... खूप वर्षांनी असे आले आहे.
+2015 मध्येही असेच झाले होते.
+तेव्हाही भीती होती. पण पीक वाचले.
+
+घाबरू नका.
+
+जे शेत खरोखर प्रभावित आहे — त्याला उपचार हवा.
+जे नाही — फक्त लक्ष ठेवा.
+
+तुमच्या dealer ला विचारा.
+
+...
+
+सर्वांचे पीक चांगले व्हावे. 🙏`,
+
+      Tamil:`[IVR Voice Message — Village Elder · Tamil · ~45 seconds]
+
+...
+
+கேளுங்கள் குழந்தைகளே.
+
+இந்த மழை... பல வருடங்களுக்கு பிறகு இப்படி வருகிறது.
+2015 லும் இப்படி ஆனது.
+அப்போதும் பயம் இருந்தது. ஆனால் பயிர் பிழைத்தது.
+
+பதட்டப்படாதீர்கள்.
+
+உங்கள் dealer-இடம் கேளுங்கள். அவர் சொல்வார்.
+
+...
+
+எல்லோர் பயிரும் நலமாக இருக்கட்டும். 🙏`,
+
+      English:`[IVR Voice Message — Village Elder · English · ~45 seconds]
+
+...
+
+Listen, my children.
+
+This weather... has not come like this in many years.
+It was like this in 2015 too.
+There was fear then also. But the crops survived.
+
+Do not panic.
+
+Fields that are truly affected — they need treatment.
+Fields that are not — just watch carefully.
+
+Ask your dealer. He will tell you.
+
+...
+
+May all your crops be well. 🙏`
+    };
+    return elderContent[lang]||elderContent.English;
+  }
+
+  return 'Content not available for this combination.';
+}
+
+// ─── MAIN GENERATE FUNCTION ───────────────────────────────────────────────────
+function generateV3Content(){
+  const voice=document.getElementById('gen-voice').value;
+  const district=document.getElementById('gen-district').value;
+  const cropVal=document.getElementById('gen-crop').value;
+  const [crop,stage]=cropVal.split(',');
+  const lang=document.getElementById('gen-lang').value;
+  const memory=document.getElementById('gen-memory').value;
+  const btn=document.querySelector('.gen-btn');
+  btn.textContent='⏳ Generating...';btn.disabled=true;
+
+  setTimeout(()=>{
+    const modeColors={panic:'pill-r',stable:'pill-gn',recover:'pill-a',confident:'pill-b'};
+    const voiceLabel={farmer:'Direct Farmer',rep:'Field Rep',dealer:'Agrodealer',champion:'Peer Champion',vaani:'VAANI Companion',elder:'Village Elder'};
+
+    // Memory context box
+    let memCtx='';
+    if(memory==='warm')memCtx=`<div class="memory-context-box"><div class="mc-label">🧠 Memory Context Applied — Warm (1 prior interaction)</div><div class="mc-body">Farmer mentioned early leaf spotting last month. Message references this naturally without being robotic about it.</div></div>`;
+    else if(memory==='trusted')memCtx=`<div class="memory-context-box"><div class="mc-label">🧠 Memory Context Applied — Trusted (3+ seasons)</div><div class="mc-body">Ramaiah ji — east plot yellowing after rain (Aug 12), Actara worked, prefers morning messages, IR64 paddy farmer. Message references past conversation as a real person would.</div></div>`;
+
+    // FARMER — handle separately (channel-specific)
+    if(voice==='farmer'){
+      let text='';let channelNote='';
+      if(currentMode==='panic'){text=V3_OUTPUTS.farmer_telugu_panic;channelNote='IVR Voice Call';}
+      else if(lang==='Telugu'){text=V3_OUTPUTS.farmer_telugu_stable;channelNote='WhatsApp Message';}
+      else if(lang==='Hindi'){text=V3_OUTPUTS.farmer_hindi_stable;channelNote='WhatsApp Message';}
+      else if(lang==='Tamil'){text=V3_OUTPUTS.farmer_tamil_stable;channelNote='WhatsApp Message';}
+      else{text=V3_OUTPUTS.farmer_sms_feature;channelNote='SMS — Feature Phone';}
+      document.getElementById('gen-meta').innerHTML=`<span class="pill pill-rs">Direct Farmer</span><span class="pill pill-b">${channelNote}</span><span class="pill ${modeColors[currentMode]||'pill-gn'}">${currentMode.toUpperCase()}</span><span class="pill pill-gn">${lang}</span>`;
+      const body=document.getElementById('gen-body');
+      body.innerHTML=memCtx+`<div class="output-text" id="ot"></div>`;
+      typeWrite(document.getElementById('ot'),text,8);
+      btn.textContent='⚡ Generate V3 Content';btn.disabled=false;
+      return;
+    }
+
+    // ALL OTHER TIERS — use content library
+    const text = buildContent(voice, currentMode, lang, crop, stage, district, memory);
+
+    document.getElementById('gen-meta').innerHTML=`<span class="pill ${modeColors[currentMode]||'pill-gn'}">${currentMode.toUpperCase()} MODE</span><span class="pill pill-t">${voiceLabel[voice]||voice}</span><span class="pill pill-gn">${lang}</span><span class="pill pill-b">${memory.toUpperCase()}</span>`;
+
+    const body=document.getElementById('gen-body');
+    body.innerHTML=memCtx+`<div class="output-text" id="ot"></div>`;
+    typeWrite(document.getElementById('ot'),text,8);
+    btn.textContent='⚡ Generate V3 Content';btn.disabled=false;
+  },800);
+}
+
+function loadQuickDemo(key){
+  const map={
+    panic_telugu:{mode:'panic',voice:'dealer',lang:'Telugu',memory:'warm',text:V3_OUTPUTS.panic_telugu_dealer,meta:'<span class="pill pill-r">PANIC MODE</span><span class="pill pill-t">Agrodealer</span><span class="pill pill-gn">Telugu</span>'},
+    stable_champion:{mode:'stable',voice:'champion',lang:'Hindi',memory:'none',text:V3_OUTPUTS.stable_champion_hindi,meta:'<span class="pill pill-gn">STABLE MODE</span><span class="pill pill-t">Peer Champion</span><span class="pill pill-b">Hindi</span>'},
+    memory_vaani:{mode:'stable',voice:'vaani',lang:'Telugu',memory:'trusted',text:V3_OUTPUTS.memory_vaani_telugu,meta:'<span class="pill pill-t">MEMORY ACTIVE</span><span class="pill pill-gn">VAANI Companion</span><span class="pill pill-b">Telugu — Trusted</span>'},
+    farmer_direct:{mode:'stable',voice:'farmer',lang:'Telugu',memory:'trusted',text:V3_OUTPUTS.farmer_telugu_stable,meta:'<span class="pill pill-rs">DIRECT FARMER</span><span class="pill pill-b">WhatsApp · Telugu</span><span class="pill pill-gn">Trusted — Season Arc</span>',isFarmer:true},
+  };
+  const d=map[key];if(!d)return;
+  currentMode=d.mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.className='mode-btn');
+  const mb=document.getElementById('mode-'+d.mode);if(mb)mb.className=`mode-btn active-${d.mode}`;
+  document.getElementById('gen-voice').value=d.voice;
+  document.getElementById('gen-lang').value=d.lang;
+  document.getElementById('gen-memory').value=d.memory;
+
+  let memCtx='';
+  if(d.memory==='trusted'&&d.voice==='farmer'){memCtx=`<div class="memory-context-box"><div class="mc-label">🧠 Memory Active — Trusted (3+ seasons)</div><div class="mc-body">Ramaiah ji — east plot yellowing (Aug 12), Actara recovery confirmed. Prefers morning WhatsApp. Message references season history.</div></div>`;}
+  else if(d.memory==='trusted'){memCtx=`<div class="memory-context-box"><div class="mc-label">🧠 Memory Context Applied — Trusted (3+ seasons)</div><div class="mc-body">Ramaiah ji — east plot yellowing after rain last month. Prefers morning messages. Actara user. Message references past conversation.</div></div>`;}
+  else if(d.memory==='warm'){memCtx=`<div class="memory-context-box"><div class="mc-label">🧠 Memory Context Applied — Warm</div><div class="mc-body">1 prior interaction. Farmer mentioned early leaf spotting. Message tone adapted accordingly.</div></div>`;}
+
+  document.getElementById('gen-meta').innerHTML=d.meta;
+  const body=document.getElementById('gen-body');
+  body.innerHTML=memCtx+`<div class="output-text" id="ot"></div>`;
+  typeWrite(document.getElementById('ot'),d.text,8);
+}
+
+function typeWrite(el,text,speed){
+  let i=0;el.innerHTML='';
+  const iv=setInterval(()=>{
+    el.innerHTML=text.slice(0,i)+'<span class="typing-cursor"></span>';
+    i++;if(i>text.length){clearInterval(iv);el.innerHTML=text;}
+  },speed);
+}
+
+// ─── SEASON ARC ────────────────────────────────────────────────────────
+const SEASONS=[
+  {phase:'Pre-Sowing',date:'April–May',emotion:'Anxious',quote:'"Did I choose the right seed? Will rain come on time?"',color:'#c06810',modeLabel:'Informational',vaani_title:'Confidence-building',vaani_body:'District performance data from last season. What variety worked best. Soil prep tips. Pure value delivery — no product mention yet.',voice_persona:'VAANI System — Warm, caring',voice_msg:'Ramaiah ji 🙏\n\nKharif season is approaching. Last year, paddy farmers in Krishna district who prepared 2 weeks earlier saw noticeably better germination.\n\nThis year the monsoon is forecast slightly early — May 28th for your area.\n\nAre you planning to sow IR64 again this year? Just wanted to check in before the season begins. 🌾'},
+  {phase:'After First Rain',date:'June',emotion:'Hopeful',quote:'"The crop is germinating. Please let it be okay."',color:'#2a7040',modeLabel:'Reassuring',vaani_title:'Proactive reassurance',vaani_body:'Crop looking healthy across district. Early pest watch calendar. "Your preparation paid off." Warmth first, minimal products.',voice_persona:'VAANI System — Memory-based',voice_msg:'Ramaiah ji 🙏\n\nFirst rains are here! Krishna district germination is looking healthy this week — 78% of farms reporting normal growth.\n\nRemember last year you mentioned your east plot takes 3 extra days? Check there this week.\n\nLooking good so far. 🌾'},
+  {phase:'Vegetative',date:'July',emotion:'Watchful',quote:'"Growing well but I need to watch for early problems."',color:'#b8780a',modeLabel:'Advisory',vaani_title:'Seasonal advisory with open-loop hook',vaani_body:'Uses script framework: hook → value → product. "Paddy farmers who did one thing differently in July saw 30% less pest pressure..." Product recommendation as the reveal.',voice_persona:'VAANI System — Story-first',voice_msg:'Ramaiah ji 🙏\n\nKrishna district paddy farmers who checked one thing in July last year saw 30% less pest pressure through the whole season.\n\nIt takes 2 minutes. Check the undersides of leaves in your oldest growth area.\n\nIf you see tiny brown dots — tell me. We will act immediately. 🌾'},
+  {phase:'Pest Season',date:'August',emotion:'Fear + Rumor',quote:'"I heard Ravi\'s entire crop is gone. Am I next?"',color:'#b83020',modeLabel:'⚠ PANIC MODE',vaani_title:'Calm authority — stabilize before recommending',vaani_body:'Detects panic cascade. "Here is the honest picture." Outbreak is real but contained. Shows who is and is not at risk. Stabilizing message before any product mention.',voice_persona:'VAANI System — Stabilizing',voice_msg:'Ramaiah ji 🙏\n\nA lot of worry is spreading in Krishna district this week. I want to give you the honest picture.\n\nBrown Planthopper is confirmed in 3 mandals. Your village of Kalidindi is NOT currently in the affected zone.\n\nHere is how to check your field: look at the base of tillers for water-soaked patches and hopper movement.\n\nIf you see it — tell me immediately. We act in 4 days. If not — your crop is fine.\n\nStay calm. 🌾'},
+  {phase:'Recovery',date:'September',emotion:'Fragile + Hoping',quote:'"My crop was damaged. Can it recover?"',color:'#a03060',modeLabel:'Empathetic',vaani_title:'Empathy before solutions',vaani_body:'Acknowledge the loss first. "We understand this is hard." Then: "Here is what is still possible." Recovery assessment + product as revival tool — not a sale.',voice_persona:'VAANI System — Empathetic + Practical',voice_msg:'Ramaiah ji 🙏\n\nI know this has been a hard week.\n\nLast month you reported yellowing in the east plot. I have been thinking about your crop.\n\nThe good news: at Tillering stage, recovery is still possible if we act in the next 4 days.\n\nHere is what you can do: [1] Drain water from affected plots [2] Apply Actara 25WG [3] Re-check in 48 hours.\n\nYou have worked hard this season. This crop can still be saved. 🌾'},
+  {phase:'Pre-Harvest',date:'October',emotion:'Mandi Anxiety',quote:'"When should I sell? Will prices drop this year?"',color:'#1a5888',modeLabel:'Intelligence',vaani_title:'Mandi timing intelligence — pure trust building',vaani_body:'Price trend data. "Prices are trending up this week." Optimal sell window. Has NOTHING to do with products — but builds deepest trust of all.',voice_persona:'VAANI System — Trusted advisor',voice_msg:'Ramaiah ji 🙏\n\nHarvest is close! A note on mandi timing this year:\n\nKrishna district paddy prices are trending upward this week — ₹1,820/quintal vs. ₹1,750 last week.\n\nFarmers who sold in the second week of October last year got the best price.\n\nThe forecast shows heavy rain from November 8th. Harvest before that if possible.\n\nWishing you the best harvest of the season. 🌾'},
+  {phase:'Post-Harvest',date:'November',emotion:'Relief + Planning',quote:'"This season is done. What do I do for next year?"',color:'#207068',modeLabel:'Reflective',vaani_title:'Season reflection + next season foundation',vaani_body:'What worked this season. What the data shows. Next season preparation tips. Relationship deepening. The cycle begins again.',voice_persona:'VAANI System — Warm, reflective',voice_msg:'Ramaiah ji 🙏\n\nThe season is complete. Thank you for staying connected through all of it.\n\nYour east plot recovered beautifully — 3 seasons of IR64 and your soil knowledge really showed.\n\nFor next season: the data suggests switching the north plot to a fungicide-resistant variety. I will send details when planning season starts.\n\nRest well. You earned it. 🌾 See you next Kharif.'},
+];
+
+function buildSeasonArc(){
+  const arc=document.getElementById('season-arc');
+  if(!arc)return;
+  arc.innerHTML='';
+  SEASONS.forEach((s,i)=>{
+    const row=document.createElement('div');
+    row.className='sa-row';
+    row.style.gridTemplateColumns='110px 150px 1fr';
+    row.innerHTML=`
+      <div class="sa-phase"><div class="sa-phase-name">${s.phase}</div><div class="sa-phase-date">${s.date}</div></div>
+      <div class="sa-emotion"><div class="sa-em-label" style="color:${s.color}">${s.emotion}</div><div class="sa-em-quote">${s.quote}</div></div>
+      <div class="sa-vaani"><div class="sa-vaani-title">VAANI: ${s.vaani_title} <span class="pill ${i===3?'pill-r':'pill-gn'}" style="font-size:7px;">${s.modeLabel}</span></div><div class="sa-vaani-body">${s.vaani_body}</div></div>
+      <div class="sa-detail" id="sa-detail-${i}">
+        <div class="sec-lbl">Actual Message VAANI Sends</div>
+        <div class="voice-bubble"><div class="vb-voice">${s.voice_persona}</div><div class="vb-text">${s.voice_msg}</div></div>
+      </div>`;
+    row.addEventListener('click',()=>{
+      const d=document.getElementById(`sa-detail-${i}`);
+      const isOpen=d.classList.contains('open');
+      document.querySelectorAll('.sa-detail').forEach(x=>x.classList.remove('open'));
+      document.querySelectorAll('.sa-row').forEach(x=>x.classList.remove('active-row'));
+      if(!isOpen){d.classList.add('open');row.classList.add('active-row');}
+    });
+    arc.appendChild(row);
+  });
+}
+
+// ─── MEMORY CARDS ──────────────────────────────────────────────────────
+const FARMERS=[
+  {name:'Ramaiah Garu',loc:'Kalidindi Village · Krishna',crop:'Paddy (IR64)',trust:'trusted',season:'4th season',lastProblem:'East plot yellowing after heavy rain — Aug 12',lastOutcome:'Actara 25WG applied — full recovery in 6 days ✅',preference:'Morning messages · Telugu · Voice calls',next:`నమస్కారం Ramaiah Garu 🙏 — పిచ్చుమారు గురించి చెప్పారు కదా గత నెల. ఆ తూర్పు పొలం ఇప్పుడు బాగుందా? మళ్ళీ అదే వర్షం రాబోతోంది...<span class="typing-cursor"></span>`},
+  {name:'Sunita Devi',loc:'Manvi Village · Bidar',crop:'Tur Dal',trust:'warm',season:'2nd season',lastProblem:'Pod dropping during flowering — Oct 3',lastOutcome:'Coragen 20 SC recommended — dealer confirmed purchase ✅',preference:'Afternoon messages · Hindi',next:`नमस्ते Sunita Devi Ji 🙏 — पिछले महीने आपकी फलियाँ गिरने की समस्या थी, याद है? Coragen से ठीक हो गया था... इस बार flowering फिर शुरू हो रही है, ध्यान रखें।`},
+  {name:'Gurpreet Singh',loc:'Fatehgarh · Ludhiana',crop:'Wheat',trust:'trusted',season:'3rd season',lastProblem:'Reported healthy crop — March 18 (confirmed good)',lastOutcome:'No intervention needed. Crop healthy at harvest ✅',preference:'Evening messages · Punjabi/Hindi',next:`Sat Sri Akal Gurpreet Singh Ji 🙏 — Your wheat was excellent last season. Maturity stage approaching again — any rust or yellowing visible yet? Same rain pattern as last March this week.`},
+  {name:'Ravi Shankar',loc:'Gudivada Village · Guntur',crop:'Cotton',trust:'cold',season:'1st season',lastProblem:'No prior interaction',lastOutcome:'Unknown — first season',preference:'Unknown — smartphone detected',next:`నమస్కారం 🙏 — గుంటూరు జిల్లాలో పత్తి పంట చేసే రైతులకు ఈ వారం ముఖ్యమైన సమాచారం ఉంది. మీ పంట ఎలా ఉంది?`},
+];
+
+function buildMemoryCards(){
+  const grid=document.getElementById('memory-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  FARMERS.forEach(f=>{
+    const div=document.createElement('div');
+    div.className='mc-card';
+    const tc=f.trust==='trusted'?'trust-trusted':f.trust==='warm'?'trust-warm':'trust-cold';
+    div.innerHTML=`
+      <div class="mc-card-head">
+        <div><div class="mc-card-name">${f.name}</div><div class="mc-card-loc">${f.loc} · ${f.season}</div></div>
+        <div class="mc-trust ${tc}">${f.trust.toUpperCase()}</div>
+      </div>
+      <div class="mc-card-body">
+        <div class="mc-field"><div class="mc-field-lbl">Crop</div><div class="mc-field-val">${f.crop}</div></div>
+        <div class="mc-field"><div class="mc-field-lbl">Last Problem</div><div class="mc-field-val">${f.lastProblem}</div></div>
+        <div class="mc-field"><div class="mc-field-lbl">Outcome</div><div class="mc-field-val">${f.lastOutcome}</div></div>
+        <div class="mc-field"><div class="mc-field-lbl">Preference</div><div class="mc-field-val">${f.preference}</div></div>
+        <div class="mc-msg-preview"><div class="mc-msg-label">🧠 Next Message — Memory-Based</div>${f.next}</div>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ─── REP VISITS V3 ─────────────────────────────────────────────────────
+// ─── UNIFIED STOPS DATA ────────────────────────────────────────────────────────
+const UNIFIED_STOPS=[
+  {rank:1,time:'9:00 AM',type:'DEALER',typeLabel:'Retailer Visit',typeColor:'var(--blue)',typeBg:'var(--blue-l)',name:'Srinivas Agro Centre',location:'Vijayawada · 4.2 km',source:'Dealer Intelligence',emotion:'panic',urgency:'CRITICAL',
+   why:'Stock critically low (6 packs only) + Brown Planthopper alert + 14 days since last visit',
+   memory:'Retailer account — no individual farmer memory. Last order: April 28. Owner: Srinivas, cooperative relationship.',
+   brief:'★ PANIC ZONE — Change your opening today.\n\nDO NOT open with product. Open with:\n"Main jaanta hoon is hafte bahut tension chal rahi hai. Pehle honest tasveer batata hoon."\n\nHonest situation brief first:\n→ Brown Planthopper confirmed in 3 mandals — NOT whole district\n→ Tillering stage = higher risk but manageable\n→ Farmers are panicking over WhatsApp rumors — calm them\n\nAfter stabilizing: push Actara 25WG\n→ Only 6 packs left — PUSH REORDER of 50 packs minimum\n→ Demand spike incoming: +340% Thu–Sat (VAANI forecast)\n→ Also discuss: Engeo Pleno as alternative\n\nReorder conversation:\n"Guruvaar tak demand aayegi — abhi order karo warna shortage hogi."\n\nDealer lock-in reminder:\n"VAANI forecast ne already bata diya — tune stock rakha na? Bina forecast ke koi nahi jaanta."',
+   logType:'dealer'},
+
+  {rank:2,time:'10:45 AM',type:'FARMER',typeLabel:'Farmer Field Visit ★',typeColor:'var(--green)',typeBg:'var(--green-l)',name:"Ramaiah Garu — Field Visit",location:'Kalidindi Village · 14 km from Stop 1',source:'Farmer Pulse Report (yesterday)',emotion:'panic',urgency:'HIGH',
+   why:'Reported yellowing via WhatsApp Pulse · Paddy at Tillering · 4-day spray window closing',
+   memory:'3 seasons of history. Last year: east plot yellowing after heavy rain (Aug 12). Applied Actara 25WG — full recovery in 6 days. Prefers morning visits. IR64 paddy variety. Trusted relationship — will be honest with you.',
+   brief:'★ MEMORY OPENING — Say this before anything else:\n"Ramaiah ji — yaad hai pichle saal baarish ke baad wahi east wala plot... kya ab theek hua tha? Wahi pattern phir dikhne laga?"\n\nThis shows you remembered. Builds trust in 10 seconds.\n\nField Diagnostic Checklist:\n□ Check base of tillers for water-soaked patches\n□ Look at underside of leaves for hopper movement\n□ Is yellowing uniform across plot or patchy?\n□ Estimate % of plot affected\n□ Any hoppers visible when you disturb the plant?\n\nIF DAMAGE CONFIRMED:\n→ Recommend Actara 25WG — 200ml/acre\n→ Drain waterlogged areas before spraying\n→ Spray window: Wednesday before Friday rain\n→ Tell him: "Tillering mein agar ab spray karo — 80% recovery possible"\n\nIF NO DAMAGE FOUND:\n→ Reassure: "Aapka plot safe lag raha hai abhi"\n→ Preventive advice: check again in 3 days\n→ THIS BUILDS MORE TRUST THAN ANY SALE\n→ A rep who says "aapko zaroorat nahi" is remembered forever\n\nLog: Crop condition + damage % + advice given + farmer reaction',
+   logType:'farmer'},
+
+  {rank:3,time:'12:30 PM',type:'DEALER',typeLabel:'Retailer Visit',typeColor:'var(--blue)',typeBg:'var(--blue-l)',name:'Ramu Kisan Store',location:'Nuzvid · 18.5 km from Stop 2',source:'Dealer Intelligence + Competitor Alert',emotion:'panic',urgency:'HIGH',
+   why:'Bayer promo running in area + Amistar Top stock low + Blast Disease confirmed nearby',
+   memory:'Regular account. Good relationship. Last order May 2. Owner tends to push highest margin product — potential loyalty risk. Has not enrolled in VAANI dealer program yet.',
+   brief:'★ PANIC ZONE — Stabilize first, then counter competitor.\n\nOpening: Same stabilizing brief as Stop 1 — situation honest assessment first.\n\nCompetitor counter (Bayer Belts promo):\n"Bayer surface pe kaam karta hai — Amistar andar jaata hai. Blast ke liye systemic hi chahiye."\n"VAANI ke data mein Amistar ne is district mein 94% efficacy dikhaya Blast pe."\n\nProduct to push: Amistar Top 325 SC\n→ Stock only 12 packs — push reorder\n→ Blast Disease = systemics, not contact spray\n→ Window: before Thursday rain\n\nDealer enrollment opportunity:\n"Tune dekha — VAANI ne 3 din pehle bata diya tha demand spike aayega. Registered dealers ko pehle stock milta hai. Is baar ka shortage miss mat karna."\n\nGoal: Get him to enroll in VAANI dealer program today.',
+   logType:'dealer'},
+
+  {rank:4,time:'2:00 PM',type:'CHAMPION',typeLabel:'Champion Sync ★',typeColor:'var(--gold)',typeBg:'var(--gold-l)',name:'Venkatesh Garu — Krishi Mitra ⭐',location:'Kalidindi Village · 9 km from Stop 3',source:'Champion Rewards Engine + Pulse Report',emotion:'recover',urgency:'MEDIUM',
+   why:'150 reward points to deliver physically · June 15 meeting to confirm · His own farm reported yellowing',
+   memory:'Champion for 2 seasons. 8 referrals this month — 6 confirmed purchases. Most trusted farmer in Kalidindi. 20+ farmers follow his advice. Last month gave neutral advice: "Wait before spraying — rain may clear it." 2 farmers followed. Authenticity score: HIGH.',
+   brief:'★ THIS IS NOT A SALES VISIT — Relationship + coordination only.\n\n1. DELIVER CERTIFICATE + POINTS — Make it feel significant:\n"Yeh sirf unhe milta hai jinhone genuinely apne gaanv ki madad ki. Aapke 8 referrals mein 6 ne kharida — VAANI ke data mein yeh top performance hai."\nDeliver: Krishi Mitra certificate (physical) + 150 points notification\nRedemption options: Free Actara for his farm / Input voucher / ₹450 UPI\n\n2. HIS FARM — Check genuinely:\n"Aapne khud yellowing report kiya tha — aapke apne plot mein kya dikh raha hai?"\nGive HONEST assessment. Not product push. He trusts you — repay that trust.\n\n3. JUNE 15 MEETING — Confirm:\nAgenda: Pest identification + soil health\nREMIND HIM: "Meeting mein product ki baat mat karna — sirf education. Trust isse hi banta hai. Jab trust banta hai, product apne aap bikta hai."\n\n4. CONTENT SYNC — What card goes to his WhatsApp group this week:\nMake sure his message and your dealer visits tell the same story.\nHis voice: first-person, experience-sharing, slight imperfection — NOT corporate.',
+   logType:'champion'},
+
+  {rank:5,time:'3:30 PM',type:'DEALER',typeLabel:'Retailer Visit',typeColor:'var(--blue)',typeBg:'var(--blue-l)',name:'Lakshmi Agro Mart',location:'Gudivada · 22 km from Stop 4',source:'Routine Schedule',emotion:'stable',urgency:'LOW',
+   why:'21 days since last visit · Cotton entering Vegetative — pre-season stock window',
+   memory:'Good account. No anomalies. Owner Lakshmi Bai — experienced, practical, data-responsive. Responds very well to demand forecast numbers. Loyal to Syngenta.',
+   brief:'★ STABLE ZONE — Normal tone. No panic framing needed here.\n\nOpen with demand forecast — she responds to data:\n"VAANI ke forecast mein Karate Zeon ki demand agle 2 hafte mein 60% badhegi. Cotton Vegetative mein aa rahi hai — yeh perfect timing hai stock karne ka."\n\nPre-season discussion:\n→ Karate Zeon 50 CS — main product for Cotton Vegetative\n→ Cotton + Grapes season overlap coming — dual demand window\n→ Suggest stocking up before demand peaks next week\n\nRelationship maintenance:\n→ Ask about last month\'s Actara campaign feedback\n→ Any new retailers opening nearby? (competitive intelligence)\n→ Share mandi price update — builds goodwill, no product angle\n\nThis is the quiet visit that keeps the relationship warm.\nThe rep who shows up when there is NO crisis is remembered.',
+   logType:'dealer'},
+];
+
+const TYPE_ICONS={DEALER:'🔵',FARMER:'🟢',CHAMPION:'⭐',INSTITUTIONAL:'🏛'};
+const EMOTION_HTML={
+  panic:`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;background:var(--red-l);color:var(--red-d);border:1px solid #f0c0b8;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;display:inline-block;">🔴 PANIC ZONE</span>`,
+  recover:`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;background:var(--amber-l);color:var(--amber-d);border:1px solid #e8c080;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;display:inline-block;">🟡 RECOVERING</span>`,
+  stable:`<span style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 7px;background:var(--green-l);color:var(--green-d);border:1px solid #a0d8b0;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;display:inline-block;">🟢 STABLE</span>`
+};
+
+function buildUnifiedStops(){
+  const container=document.getElementById('unified-stops');
+  if(!container)return;
+  container.innerHTML='';
+  UNIFIED_STOPS.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.style.cssText=`background:white;border:1px solid var(--border);border-left:5px solid ${s.typeColor};margin-bottom:10px;transition:all 0.15s;`;
+    div.onmouseenter=()=>{div.style.transform='translateX(3px)';div.style.boxShadow='2px 4px 12px rgba(0,0,0,0.05)';};
+    div.onmouseleave=()=>{div.style.transform='';div.style.boxShadow='';};
+
+    const memBox = s.type!=='DEALER' ? `<div style="background:var(--teal-l);border:1px solid #90d0c8;border-left:3px solid var(--teal);padding:10px 14px;margin-bottom:12px;"><div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);font-weight:700;margin-bottom:5px;">🧠 Memory Brief — Know This Before You Arrive</div><div style="font-size:11px;color:#507060;line-height:1.7;">${s.memory}</div></div>` : `<div style="background:var(--bg2);border:1px solid var(--border);padding:10px 14px;margin-bottom:12px;"><div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:5px;">Account Brief</div><div style="font-size:11px;color:#6a5a48;line-height:1.7;">${s.memory}</div></div>`;
+
+    const briefLabel = s.type==='FARMER' ? '🌾 Field Diagnostic + Action Brief' : s.type==='CHAMPION' ? '⭐ Champion Sync Brief' : '🔵 Dealer Talking Points';
+
+    div.innerHTML=`
+      <div style="padding:14px 18px;display:flex;align-items:flex-start;gap:14px;cursor:pointer;" onclick="toggleStop(${i})">
+        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--bg3);line-height:1;flex-shrink:0;min-width:34px;">0${s.rank}</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap;">
+            <span style="font-size:14px;font-weight:700;">${s.name}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:8px;padding:2px 8px;background:${s.typeBg};color:${s.typeColor};font-weight:700;letter-spacing:0.08em;text-transform:uppercase;display:inline-block;">${TYPE_ICONS[s.type]} ${s.typeLabel}</span>
+            <span class="urg ${s.urgency}">${s.urgency}</span>
+            ${EMOTION_HTML[s.emotion]||''}
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.05em;margin-bottom:5px;">📍 ${s.location} &nbsp;·&nbsp; Source: ${s.source}</div>
+          <div style="font-size:12px;color:#6a5a48;line-height:1.5;"><strong>Why today:</strong> ${s.why}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;">${s.time}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);margin-top:2px;">tap to expand ↓</div>
+        </div>
+      </div>
+      <div id="stop-body-${i}" style="display:none;border-top:1px solid var(--border);padding:16px 18px;background:var(--bg2);animation:fadeIn 0.2s ease;">
+        ${memBox}
+        <div style="background:white;border:1px solid var(--border);padding:14px 16px;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:10px;">${briefLabel}</div>
+          <div style="font-size:12px;color:var(--ink2);line-height:1.9;white-space:pre-wrap;">${s.brief}</div>
+        </div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleStop(i){
+  const body=document.getElementById('stop-body-'+i);
+  if(!body)return;
+  body.style.display=body.style.display==='none'?'block':'none';
+}
+
+// ─── OUTCOME LOGGER ────────────────────────────────────────────────────────────
+function selectLogStop(el,name,type){
+  document.querySelectorAll('.log-stop-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('log-success').style.display='none';
+  const form=document.getElementById('log-form');
+  form.style.display='block';
+
+  const btnStyle='padding:9px 14px;border:1px solid var(--border);background:var(--bg);font-family:\'Outfit\',sans-serif;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink2);transition:all 0.15s;';
+
+  if(type==='dealer'){
+    form.innerHTML=`
+      <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:12px;">${name} — Dealer Visit Log</div>
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px;">Outcome</div>
+        <div style="display:flex;gap:6px;">
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--green-l)','var(--green-d)')">✅ Sale Made</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--gold-l)','var(--gold-d)')">💬 Inquiry Only</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--bg3)','var(--muted)')">❌ No Purchase</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px;">Competitor Activity?</div>
+        <div style="display:flex;gap:6px;">
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--red-l)','var(--red-d)')">Bayer Active</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--red-l)','var(--red-d)')">Corteva Active</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--green-l)','var(--green-d)')">None Seen</button>
+        </div>
+      </div>
+      <button onclick="submitLog('dealer','${name}')" style="width:100%;padding:11px;background:var(--ink);color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;border:none;cursor:pointer;margin-top:4px;">Log Dealer Visit → Updates Inventory + Routing</button>`;
+  } else if(type==='farmer'){
+    form.innerHTML=`
+      <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:12px;">${name} — Farmer Field Log</div>
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px;">Crop Condition Observed</div>
+        <div style="display:flex;gap:6px;">
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--green-l)','var(--green-d)')">🟢 Healthy — No damage</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--amber-l)','var(--amber-d)')">🟡 Mild — Under 30%</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--red-l)','var(--red-d)')">🔴 Severe — Above 30%</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px;">Action Taken</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--blue-l)','var(--blue-d)')">Recommended Actara</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--teal-l)','var(--teal-d)')">Reassured Only</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--gold-l)','var(--gold-d)')">Advised Wait + Check</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px;">Farmer Reaction</div>
+        <div style="display:flex;gap:6px;">
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--green-l)','var(--green-d)')">Receptive</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--amber-l)','var(--amber-d)')">Skeptical</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--blue-l)','var(--blue-d)')">Concerned but trusting</button>
+        </div>
+      </div>
+      <button onclick="submitLog('farmer','${name}')" style="width:100%;padding:11px;background:var(--green);color:white;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;border:none;cursor:pointer;">Log Field Visit → Updates Farmer Memory DB + Pulse Score</button>`;
+  } else if(type==='champion'){
+    form.innerHTML=`
+      <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:700;margin-bottom:12px;">${name} — Champion Sync Log</div>
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px;">150 Points Delivered?</div>
+        <div style="display:flex;gap:6px;">
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--green-l)','var(--green-d)')">✅ Delivered + Certificate</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--red-l)','var(--red-d)')">❌ Champion Absent</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px;">June 15 Meeting Confirmed?</div>
+        <div style="display:flex;gap:6px;">
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--green-l)','var(--green-d)')">✅ Confirmed</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--amber-l)','var(--amber-d)')">📅 Needs Rescheduling</button>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:7px;">Champion Gave Neutral Advice This Week?</div>
+        <div style="display:flex;gap:6px;">
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--green-l)','var(--green-d)')">✅ Yes — Authenticity Good</button>
+          <button style="${btnStyle}" onclick="hlBtn(this,'var(--red-l)','var(--red-d)')">⚠ Only Product Push</button>
+        </div>
+      </div>
+      <button onclick="submitLog('champion','${name}')" style="width:100%;padding:11px;background:var(--gold);color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;font-weight:700;border:none;cursor:pointer;">Log Champion Sync → Updates Rewards Engine</button>`;
+  }
+}
+
+function hlBtn(el,bg,col){
+  const siblings=el.parentElement.querySelectorAll('button');
+  siblings.forEach(b=>{b.style.background='var(--bg)';b.style.color='var(--ink2)';b.style.borderColor='var(--border)';});
+  el.style.background=bg; el.style.color=col; el.style.borderColor=col;
+}
+
+function submitLog(type,name){
+  const msgs={
+    dealer:`✅ Dealer visit logged — systems updated:\n\n→ ${name} stock levels updated in inventory DB\n→ Demand forecast recalibrated for this zone\n→ Next visit auto-scheduled: 7 days\n→ Territory Health Score adjusted\n→ Dealer performance dashboard updated\n→ If sale made: conversion tracked against VAANI campaign`,
+    farmer:`✅ Farmer field visit logged — systems updated:\n\n→ Farmer memory record updated with today's observation\n→ Crop condition added to territory pulse score\n→ If damage reported: dealer brief + rep alert auto-triggered\n→ If healthy: next touchpoint scheduled in 14 days\n→ Season arc advanced to next phase\n→ Ground truth data: more accurate than NDVI satellite alone`,
+    champion:`✅ Champion sync logged — systems updated:\n\n→ 150 reward points marked as delivered\n→ June 15 meeting confirmed in education calendar\n→ Champion authenticity score maintained\n→ Content sync noted — messaging alignment confirmed\n→ Next sync auto-scheduled: 30 days\n→ Referral attribution window reset for next cycle`
+  };
+  document.getElementById('log-form').style.display='none';
+  const suc=document.getElementById('log-success');
+  suc.style.display='block';
+  suc.innerHTML=`<div style="font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);font-weight:700;margin-bottom:8px;">✅ All Systems Updated</div><div style="font-size:12px;line-height:1.9;white-space:pre-wrap;color:var(--green-d);">${msgs[type]||'Visit logged.'}</div>`;
+  document.querySelectorAll('.log-stop-btn').forEach(b=>b.classList.remove('selected'));
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  buildSeasonArc();
+  buildMemoryCards();
+  buildUnifiedStops();
+});
+</script>
+</body>
+</html>
