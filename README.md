@@ -20,6 +20,16 @@ Syngenta-IITM-Hackathon-2026-Final/
 
 ---
 
+
+# Prototype Files
+
+| File Name | Description |
+| ---------- | ----------- |
+| `KrishiMinds_Vaani_Prototype.html` | Interactive frontend prototype for the Krishi Minds AI-powered agricultural assistant platform. |
+| `KrishiMinds_Vaani_Roadmap.html.html` | Product roadmap and future development plan for Krishi Minds features and modules. |
+
+---
+
 # Key Features
 
 * Multilingual Voice AI Assistant
