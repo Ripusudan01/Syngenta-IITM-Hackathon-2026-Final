@@ -1,5 +1,7 @@
 from langdetect import detect
 from deep_translator import GoogleTranslator
+import os
+from google import genai
 
 from app.ml.conversation_memory import (
     ConversationMemory
@@ -11,6 +13,10 @@ class MultilingualRelationshipAI:
     def __init__(self, farmer_profiles_df):
 
         self.df = farmer_profiles_df.copy()
+
+        self.client = genai.Client(
+            api_key=os.getenv("GEMINI_API_KEY")
+        )
 
         self.memory_engine = (
             ConversationMemory()
@@ -94,179 +100,49 @@ class MultilingualRelationshipAI:
     # Build AI Reply
     # =========================
 
-    def build_relationship_reply(
-        self,
-        farmer,
-        translated_question,
-        previous_memories
-    ):
+    def build_relationship_reply(self, farmer, translated_question, previous_memories):
 
-        trust = farmer["trust_level"]
+        prompt = f"""
+    You are an expert agricultural advisor helping farmers.
 
-        panic = farmer["panic_state"]
+    Farmer Name: {farmer['farmer_name']}
+    District: {farmer['district']}
+    Trust Level: {farmer['trust_level']}
+    Panic State: {farmer['panic_state']}
 
-        memory = farmer["memory_context"]
+    Previous Memories:
+    {previous_memories}
 
-        farmer_name = farmer["farmer_name"]
+    Farmer Question:
+    {translated_question}
 
-        question = translated_question.lower()
+    Instructions:
+    - Act as a professional agricultural extension officer.
+    - Use the farmer profile and previous memories.
+    - Give specific crop recommendations.
+    - Mention fertilizers, irrigation, pest management when relevant.
+    - Be concise.
+    - Keep response under 120 words.
+    """
 
-        # =========================
-        # Previous memory context
-        # =========================
+        try:
 
-        memory_context_text = ""
-
-        if previous_memories:
-
-            memory_context_text = (
-                "We noticed similar crop issues during earlier conversations. "
+            response = self.client.models.generate_content(
+                model="models/gemini-2.5-flash",
+                contents=prompt
             )
 
-        # =========================
-        # Pest / insects
-        # =========================
+            return response.text
 
-        if any(
-            word in question
-            for word in [
-                "insect",
-                "insects",
-                "pest",
-                "bug",
-                "infestation",
-                "worm"
-            ]
-        ):
+        except Exception as e:
 
             return (
-                f"{farmer_name} ji, "
-                f"{memory_context_text}"
-                f"We understand pest problems "
-                f"can spread quickly. "
-                f"Please inspect affected leaves "
-                f"immediately. "
-                f"Our field team will guide you "
-                f"with pest control measures."
+                f"{farmer['farmer_name']} ji, "
+                f"Thank you for contacting us. "
+                f"We recommend monitoring your crop carefully "
+                f"and consulting the local field officer. "
+                f"(Fallback response: {str(e)})"
             )
-
-        # =========================
-        # Yellow crops
-        # =========================
-
-        if any(
-            word in question
-            for word in [
-                "yellow",
-                "yellowing",
-                "yellowish"
-            ]
-        ):
-
-            return (
-                f"{farmer_name} ji, "
-                f"{memory_context_text}"
-                f"Yellowing may happen due to "
-                f"nutrient deficiency or "
-                f"water stress. "
-                f"Our advisory team recommends "
-                f"field inspection this week."
-            )
-
-        # =========================
-        # Water / flood
-        # =========================
-
-        if any(
-            word in question
-            for word in [
-                "water",
-                "flood",
-                "rain",
-                "rainfall",
-                "overflow",
-                "waterlogging"
-            ]
-        ):
-
-            return (
-                f"{farmer_name} ji, "
-                f"{memory_context_text}"
-                f"Excess water can damage "
-                f"crop roots. "
-                f"Please improve drainage "
-                f"if possible."
-            )
-
-        # =========================
-        # Heat / dryness
-        # =========================
-
-        if any(
-            word in question
-            for word in [
-                "dry",
-                "heat",
-                "hot",
-                "temperature",
-                "sunlight",
-                "drought"
-            ]
-        ):
-
-            return (
-                f"{farmer_name} ji, "
-                f"{memory_context_text}"
-                f"Heat stress may reduce "
-                f"crop growth. "
-                f"Please monitor irrigation carefully."
-            )
-
-        # =========================
-        # Panic fallback
-        # =========================
-
-        if panic == "PANIC":
-
-            return (
-                f"{farmer_name} ji, "
-                f"We understand your concern. "
-                f"We remember: {memory}. "
-                f"Please do not panic. "
-                f"Our field team will support you immediately."
-            )
-
-        # =========================
-        # Trusted fallback
-        # =========================
-
-        if trust == "TRUSTED":
-
-            return (
-                f"Namaste {farmer_name} ji 🙏 "
-                f"We remember your previous season. "
-                f"{memory}. "
-                f"Your crop situation can improve "
-                f"with early monitoring."
-            )
-
-        # =========================
-        # Cold fallback
-        # =========================
-
-        if trust == "COLD":
-
-            return (
-                f"We noticed your field conditions "
-                f"may need attention. "
-                f"Our advisory team recommends "
-                f"monitoring this week."
-            )
-
-        return (
-            f"We noticed similar field conditions nearby. "
-            f"Timely action can reduce crop stress risk."
-        )
 
     # =========================
     # Generate Response

@@ -21,6 +21,7 @@ dependencies = [
     "pygame>=2.6.1",
     "python-dotenv>=1.2.2",
     "python-multipart>=0.0.29",
+    "redis>=8.0.0",
     "scikit-learn>=1.8.0",
     "sentence-transformers>=5.5.0",
     "speechrecognition>=3.16.1",

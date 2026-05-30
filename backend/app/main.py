@@ -5,6 +5,10 @@ from fastapi import (
     HTTPException
 )
 
+import json
+
+from app.core.redis_client import redis_client
+
 from fastapi.staticfiles import StaticFiles
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -323,7 +327,26 @@ def field_strategy(
 )
 def llm_summary():
 
-    return llm_engine.executive_summary()
+    cache_key = "llm_summary"
+
+    cached = None
+
+    if redis_client:
+        cached = redis_client.get(cache_key)
+
+    if cached:
+        return json.loads(cached)
+
+    result = llm_engine.executive_summary()
+
+    if redis_client:
+        redis_client.setex(
+            cache_key,
+            600,
+            json.dumps(result)
+        )
+
+    return result
 
 # ============================================================
 # TRUST APIs
@@ -361,7 +384,25 @@ def critical_farmers():
 )
 def trust_summary():
 
-    return trust_engine.get_summary()
+    cache_key = "trust_summary"
+    cached = None
+
+    if redis_client:
+        cached = redis_client.get(cache_key)
+
+    if cached:
+        return json.loads(cached)
+
+    result = trust_engine.get_summary()
+
+    if redis_client:
+        redis_client.setex(
+            cache_key,
+            600,
+            json.dumps(result)
+        )
+
+    return result
 
 # ============================================================
 # NEXT BEST ACTION API
@@ -373,14 +414,29 @@ def trust_summary():
     tags=["Field Force Intelligence"],
     summary="Generate Next Best Action"
 )
-def next_best_action(
-    retailer_id: str
-):
+def next_best_action(retailer_id: str):
 
-    return (
-        next_best_action_engine
-        .generate_action(retailer_id)
+    cache_key = f"next_action:{retailer_id}"
+    cached = None
+
+    if redis_client:
+        cached = redis_client.get(cache_key)
+
+    if cached:
+        return json.loads(cached)
+
+    result = next_best_action_engine.generate_action(
+        retailer_id
     )
+
+    if redis_client:
+        redis_client.setex(
+            cache_key,
+            600,
+            json.dumps(result)
+        )
+
+    return result
 
 # ============================================================
 # DAILY VISIT PLAN API
@@ -394,10 +450,25 @@ def next_best_action(
 )
 def daily_visit_plan():
 
-    return (
-        visit_planning_engine
-        .generate_daily_plan()
-    )
+    cache_key = "daily_visit_plan"
+    cached = None
+
+    if redis_client:
+        cached = redis_client.get(cache_key)
+
+    if cached:
+        return json.loads(cached)
+
+    result = visit_planning_engine.generate_daily_plan()
+
+    if redis_client:
+        redis_client.setex(
+            cache_key,
+            600,
+            json.dumps(result)
+        )
+
+    return result
 
 # ============================================================
 # CITY RISK SUMMARY API
@@ -411,6 +482,15 @@ def daily_visit_plan():
 )
 def city_risk_summary():
 
+    cache_key = "city_risk_summary"
+    cached = None
+
+    if redis_client:
+        cached = redis_client.get(cache_key)
+
+    if cached:
+        return json.loads(cached)
+    
     df = llm_engine.df.copy()
 
     city_risks = []
@@ -487,16 +567,20 @@ def city_risk_summary():
         reverse=True
     )
 
-    return {
-
+    result = {
         "status": "success",
-
-        "total_cities":
-            len(city_risks),
-
-        "city_risk_summary":
-            city_risks
+        "total_cities": len(city_risks),
+        "city_risk_summary": city_risks
     }
+
+    if redis_client:
+        redis_client.setex(
+            cache_key,
+            1800,
+            json.dumps(result)
+        )
+
+    return result
 
 # ============================================================
 # EXECUTIVE DASHBOARD API
@@ -509,6 +593,15 @@ def city_risk_summary():
     summary="Executive Dashboard Summary"
 )
 def executive_dashboard_summary():
+
+    cache_key = "executive_dashboard"
+    cached = None
+
+    if redis_client:
+        cached = redis_client.get(cache_key)
+
+    if cached:
+        return json.loads(cached)
 
     df = llm_engine.df.copy()
 
@@ -538,7 +631,7 @@ def executive_dashboard_summary():
         "Meerut"
     ]
 
-    return {
+    result = {
 
         "status": "success",
 
@@ -566,6 +659,15 @@ def executive_dashboard_summary():
             "Crop Disease Vision"
         ]
     }
+
+    if redis_client:
+        redis_client.setex(
+            cache_key,
+            1800,
+            json.dumps(result)
+        )
+
+    return result
 
 # ============================================================
 # MULTILINGUAL AI API
