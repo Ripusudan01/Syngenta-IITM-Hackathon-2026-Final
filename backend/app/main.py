@@ -27,6 +27,10 @@ import time
 
 from gtts import gTTS
 
+from app.services.messaging_service import (
+    send_whatsapp
+)
+
 # ============================================================
 # ML IMPORTS
 # ============================================================
@@ -201,10 +205,9 @@ def get_voice_model():
 
 
 class FarmerQuestionRequest(BaseModel):
-
     retailer_id: str
-
     farmer_question: str
+    send_to_whatsapp: bool = False
 
 
 class StockoutPredictionRequest(BaseModel):
@@ -682,11 +685,23 @@ def executive_dashboard_summary():
 def multilingual_relationship_ai_api(
     request: FarmerQuestionRequest
 ):
-
-    return multilingual_ai.generate_response(
+    response = multilingual_ai.generate_response(
         retailer_id=request.retailer_id,
         farmer_question=request.farmer_question
     )
+
+    if request.send_to_whatsapp:
+
+        send_whatsapp(
+            "+919876543210",
+            response["localized_response"]
+        )
+
+        response["delivery_status"] = (
+            "WhatsApp Prototype Sent"
+        )
+
+    return response
 
 # ============================================================
 # VAANI VOICE AI API
